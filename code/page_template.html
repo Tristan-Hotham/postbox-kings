@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>What's the King on Your Postbox?</title>
+<meta name="description" content="Every UK post box in OpenStreetMap by royal cypher: how many survive from each reign, where the Victorian and Edward VIII boxes are, and the oldest postbox near you.">
+<meta property="og:title" content="What's the king on your postbox?">
+<meta property="og:description" content="{{meta.n|int}} UK post boxes in OpenStreetMap, {{tag.dated|int}} with a readable royal cypher: {{reigns.0.n|int}} Victorian, {{edward8.n|int}} from the 325 days of Edward VIII. Find the oldest postbox near you.">
+<meta property="og:image" content="https://tristan-hotham.github.io/postbox-kings/header.png">
+<meta property="og:url" content="https://tristan-hotham.github.io/postbox-kings/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800;9..144,900&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+/* Cream paper and pillar-box red. Each reign has its own colour, used on the map, the charts and the collage. */
+:root{
+  --bg:#F6F1E7; --panel:#ECE5D6; --fg:#1F1B18; --muted:#6B6359; --rule:#DDD4C3; --card:#FCF9F2; --border:#CBBFA9;
+  --hot:#C8102E; --gold:#B08A1E;
+  --VR:#1F4E79; --EVIIR:#7B3F98; --GR:#2E7D4F; --EVIIIR:#C9A227; --GVIR:#B85C1E; --EIIR:#C8102E; --SC:#3A6FB0; --CIIIR:#5A2A82; --none:#A79C8C; --unclear:#A79C8C; --untagged:#C9C0B0;
+  --display:"Fraunces",Georgia,"Times New Roman",serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#161413; --panel:#211E1B; --fg:#EEE8DE; --muted:#A59D90; --rule:#36322D; --card:#221F1C; --border:#4B463F;
+  --hot:#F0505F; --gold:#E0BC55;
+  --VR:#6FA3D6; --EVIIR:#B88AD6; --GR:#6BBF8C; --EVIIIR:#E8C64D; --GVIR:#E08A4D; --EIIR:#F0505F; --SC:#7FA8E0; --CIIIR:#A57AD0; --none:#7A7268; --unclear:#7A7268; --untagged:#4F4A43; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#161413; --panel:#211E1B; --fg:#EEE8DE; --muted:#A59D90; --rule:#36322D; --card:#221F1C; --border:#4B463F;
+  --hot:#F0505F; --gold:#E0BC55;
+  --VR:#6FA3D6; --EVIIR:#B88AD6; --GR:#6BBF8C; --EVIIIR:#E8C64D; --GVIR:#E08A4D; --EIIR:#F0505F; --SC:#7FA8E0; --CIIIR:#A57AD0; --none:#7A7268; --unclear:#7A7268; --untagged:#4F4A43; color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 18px/1.62 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));overflow-x:hidden}
+.wrap{max-width:680px;margin:0 auto;padding-block:28px 64px}
+.wrap .bleed{width:min(1080px,calc(100vw - 32px));margin-left:calc((100% - min(1080px,100vw - 32px))/2);margin-right:0}
+a{color:inherit;text-decoration-color:var(--hot);text-underline-offset:3px}
+.kicker{font:500 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.kicker b{background:var(--hot);color:#fff;padding:5px 8px;font-weight:500}
+header.hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px 24px;align-items:end;border-bottom:6px double var(--fg);padding-bottom:22px;margin-top:18px}
+h1{font:900 clamp(44px,11vw,94px)/.9 var(--display);letter-spacing:-.02em;margin:0;text-wrap:balance;font-variation-settings:"SOFT" 50}
+h1 em{font-style:normal;color:var(--hot)}
+.mark{width:clamp(74px,16vw,128px);height:auto;display:block}
+.dek{grid-column:1/-1;font-size:21px;line-height:1.42;margin:8px 0 0;max-width:46ch}
+.byline{font:400 13px/1.4 var(--mono);color:var(--muted);margin-top:14px}
+h2{font:800 34px/1.04 var(--display);letter-spacing:-.01em;margin:52px 0 10px;text-wrap:balance}
+h2 .n{font:500 13px/1 var(--mono);color:var(--hot);display:block;letter-spacing:.1em;margin-bottom:10px}
+h3{font:600 20px/1.25 var(--display);margin:28px 0 6px}
+p{margin:0 0 16px}
+.lede::first-letter{font:900 72px/.8 var(--display);float:left;margin:6px 10px 0 0;color:var(--hot)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:26px 0 8px}
+.stats div{background:var(--card);padding:14px 12px}
+.stats b{display:block;font:900 clamp(26px,5.6vw,38px)/1 var(--display);color:var(--fg)}
+.stats b.h{color:var(--hot)}
+.stats span{font:400 12px/1.35 var(--mono);color:var(--muted);display:block;margin-top:6px}
+@media (max-width:600px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.figure{margin:26px 0 30px}
+.fig-h{font:600 19px/1.25 var(--display);margin:0 0 4px}
+.fig-sub{font:400 13px/1.45 var(--mono);color:var(--muted);margin:0 0 12px}
+.src{font:400 12px/1.45 var(--mono);color:var(--muted);margin-top:10px}
+.chart{width:100%;position:relative}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+svg text{font-family:var(--mono);fill:var(--fg)}
+.lab{font-size:12px}.lab.m{fill:var(--muted)}.lab.b{font-weight:500}.lab.s{font-size:11px}
+.tip{position:absolute;pointer-events:none;background:var(--fg);color:var(--bg);font:400 12px/1.45 var(--mono);padding:8px 10px;border-radius:3px;max-width:270px;z-index:1000;transform:translate(-50%,calc(-100% - 12px));display:none}
+.tip b{font-weight:500}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+.btn{font:500 12px/1 var(--mono);background:var(--card);color:var(--fg);border:1px solid var(--border);border-radius:3px;padding:8px 10px;cursor:pointer;min-height:36px}
+.btn[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.btn:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--hot);outline-offset:2px}
+.btn i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:3px;overflow:hidden;max-width:100%;flex-wrap:wrap}
+.seg .btn{border:0;border-radius:0;border-right:1px solid var(--border)}
+.seg .btn:last-child{border-right:0}
+.searchbox{position:relative;flex:1 1 240px;min-width:0}
+input[type=search]{font:400 15px/1 var(--mono);background:var(--card);color:var(--fg);border:1px solid var(--border);border-radius:3px;padding:10px 11px;min-height:40px;width:100%}
+.suggest{position:absolute;left:0;right:0;top:100%;margin:2px 0 0;padding:0;list-style:none;background:var(--card);border:1px solid var(--border);z-index:1001;font:400 13px/1.3 var(--mono);display:none;max-height:340px;overflow:auto}
+.suggest li{padding:8px 10px;cursor:pointer;border-bottom:1px solid var(--rule)}
+.suggest li span{color:var(--muted)}
+.suggest li[aria-selected="true"],.suggest li:hover{background:var(--panel)}
+.finder{background:var(--card);border:1px solid var(--border);border-top:6px solid var(--hot);padding:16px 16px 10px;margin:20px 0 14px}
+.finder .controls{margin-bottom:6px}
+#answer{min-height:24px}
+#answer .big{font:800 clamp(22px,4.6vw,30px)/1.15 var(--display);margin:10px 0 8px;text-wrap:balance}
+#answer .big em{font-style:normal}
+#answer ol{list-style:none;margin:6px 0 4px;padding:0;font:400 13px/1.35 var(--mono)}
+#answer li{display:grid;grid-template-columns:14px minmax(0,1fr) auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--rule);cursor:pointer}
+#answer li.no{cursor:default;color:var(--muted)}
+#answer li i{width:12px;height:12px;border-radius:50%}
+#answer li b{font-weight:500}
+#answer .pn{font:400 12px/1.45 var(--mono);color:var(--muted);margin:8px 0 6px}
+#lmap{height:660px;border:1px solid var(--border);background:var(--panel);border-radius:2px}
+@media (max-width:600px){#lmap{height:500px}}
+.leaflet-container{font:400 12px/1.4 var(--mono);background:var(--panel)}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--card);color:var(--fg);border-radius:3px;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.leaflet-popup-content{margin:12px 14px;font:400 12.5px/1.45 var(--mono);min-width:200px}
+.leaflet-container a.leaflet-popup-close-button{color:var(--muted)}
+.leaflet-popup-content a{color:var(--fg)}
+.leaflet-bar a,.leaflet-bar a:hover{background:var(--card);color:var(--fg);border-bottom-color:var(--border)}
+.leaflet-control-attribution{background:color-mix(in srgb,var(--card) 85%,transparent)!important;color:var(--muted)}
+.leaflet-control-attribution a{color:var(--fg)}
+.pop b.t{font:600 17px/1.2 var(--display);display:block;margin-bottom:2px}
+.pop .c{color:var(--muted);margin-bottom:6px}
+.pop dl{display:grid;grid-template-columns:auto 1fr;gap:1px 10px;margin:4px 0 6px}
+.pop dt{color:var(--muted)}.pop dd{margin:0}
+.legend{display:flex;gap:6px 14px;flex-wrap:wrap;font:400 12px/1.3 var(--mono);color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.legend i.sq{border-radius:1px}
+.pull{font:600 26px/1.25 var(--display);border-left:6px solid var(--hot);padding:4px 0 4px 18px;margin:30px 0}
+.note{background:var(--panel);border:1px solid var(--rule);padding:14px 16px;font-size:16px;margin:22px 0}
+.note h3{margin-top:0}
+table.t{width:100%;border-collapse:collapse;font:400 13px/1.35 var(--mono)}
+table.t th{text-align:left;font-weight:500;color:var(--muted);border-bottom:2px solid var(--fg);padding:6px 8px 6px 0}
+table.t td{border-bottom:1px solid var(--rule);padding:7px 8px 7px 0;vertical-align:top}
+table.t td.num,table.t th.num{text-align:right;white-space:nowrap}
+table.t td small{color:var(--muted);display:block}
+table.t tr.go{cursor:pointer}
+table.t tr.go:hover td{background:var(--panel)}
+.tablewrap{overflow-x:auto}
+@media (max-width:600px){table.t .wide{display:none}}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:20px 0}
+@media (max-width:600px){.cards{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--hot);padding:12px 14px;font:400 13px/1.5 var(--mono)}
+.card b{font:600 19px/1.2 var(--display);display:block;margin-bottom:2px}
+.card .big{font:900 30px/1.05 var(--display);margin:6px 0 2px}
+.card .big span{color:var(--muted);font:400 13px/1 var(--mono)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 0}
+.chip{font:500 12px/1 var(--mono);padding:7px 9px;border-radius:999px;color:#fff;white-space:nowrap}
+details{margin:14px 0}
+summary{font:500 13px/1.4 var(--mono);cursor:pointer;color:var(--fg);padding:8px 0}
+.cta{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.cta a{font:500 13px/1 var(--mono);text-decoration:none;border:1px solid var(--fg);padding:11px 14px;border-radius:3px}
+.cta a.p{background:var(--hot);border-color:var(--hot);color:#fff}
+footer{border-top:6px double var(--fg);margin-top:56px;padding-top:16px;font:400 13px/1.55 var(--mono);color:var(--muted)}
+footer p{margin:0 0 10px}
+.theme{position:fixed;right:12px;bottom:12px;z-index:1002}
+@media print{.theme,.controls{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="kicker"><b>Data study</b><span>Street furniture</span><span>United Kingdom, 1853 to 2026</span></div>
+<header class="hero">
+  <h1>What's the king on your <em>postbox?</em></h1>
+  <svg class="mark" viewBox="0 0 120 200" aria-hidden="true"><g id="heroMark"></g></svg>
+  <p class="dek">Every British post box carries the cypher of the monarch who reigned when it was made. OpenStreetMap's volunteers have mapped {{meta.n|int}} UK boxes and read the cypher on {{tag.dated|int}}. So which kings and queens are still out on our streets, and how old is the box at the end of your road?</p>
+</header>
+<div class="byline">Dr Tristan Hotham, Independent researcher · October 2026 · Data: © OpenStreetMap contributors (ODbL); OS Open Names; ONS; Wikidata; Wikipedia</div>
+
+<div class="stats">
+  <div><b>{{meta.n|int}}</b><span>UK post boxes in OpenStreetMap, about {{meta.osm_vs_rm|pct}} of Royal Mail's 115,000</span></div>
+  <div><b>{{tag.dated|int}}</b><span>with a royal cypher (or the Scottish crown) recorded</span></div>
+  <div><b class="h">{{victoria.n|int}}</b><span>Victorian boxes, VR, still mapped on the street</span></div>
+  <div><b class="h">{{edward8.n|int}}</b><span>boxes of Edward VIII, the king who reigned 325 days</span></div>
+</div>
+
+<p class="lede">Look at the door of a pillar box and, just under the slot, you will usually find two or three letters and a crown. VR for Victoria Regina. GR for George V. EIIR for Elizabeth II. A post box keeps the cypher of the reign in which it was cast, so the street is a museum that nobody curates: a Victorian wall box in a village lane, a George V pillar outside a 1920s parade, a Charles III box on a new estate.</p>
+<p>OpenStreetMap, the free map built by volunteers, records post boxes with a tag for the royal cypher. I took every UK box in it on {{meta.retrieved_text}}, sorted them by reign and asked three questions. How many of each reign survive, and where? Can the boxes on a town's streets tell you when the town was built? And how much of this is the map, rather than the boxes?</p>
+
+<h2><span class="n">01 · Find yours</span>The oldest postbox near you</h2>
+<p>Type a town, village or postcode, or use your location. I list the nearest mapped box from each reign and pick out the oldest one within a kilometre. Then go and look: the cypher is on the door, and OpenStreetMap's mappers would welcome a correction if it is wrong.</p>
+<div class="finder">
+  <div class="controls">
+    <div class="searchbox">
+      <input type="search" id="q" placeholder="Town, village or postcode" aria-label="Find a place or postcode" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="sug">
+      <ul class="suggest" id="sug" role="listbox"></ul>
+    </div>
+    <button class="btn" id="geo">Use my location</button>
+  </div>
+  <div id="answer"><div class="pn">Try Framlingham, Golspie or Buxton. Postcodes are looked up with postcodes.io, a free service built on Office for National Statistics and Ordnance Survey open data; place names are looked up on this page.</div></div>
+</div>
+<p>How likely are you to have a Victorian box nearby? Of the {{nearest.towns|int}} towns and cities in OS Open Names, {{nearest.towns_vr1|int}} ({{nearest.towns_vr1_share|pct}}) have a mapped VR box within a kilometre of the point that marks their centre, and the typical town is {{nearest.towns_vr_median|f1}} km from one. Stornoway, in the Western Isles, is the furthest: {{nearest.towns_far.0.km|int}} km. These are mapped boxes, so some towns will have a Victorian box that nobody has tagged yet.</p>
+<div class="figure bleed">
+  <div class="controls">
+    <div class="seg" role="group" aria-label="Show boxes of" id="reignBtns"></div>
+    <div class="seg" role="group" aria-label="Map layer"><button class="btn" data-layer="boxes" aria-pressed="true">Boxes</button><button class="btn" data-layer="cover" aria-pressed="false">How complete?</button></div>
+  </div>
+  <div id="lmap" role="region" aria-label="Map of {{meta.n|int}} UK post boxes coloured by the reign on their royal cypher"></div>
+  <div class="legend" id="legend"></div>
+  <div class="src">Each dot is a post box in OpenStreetMap ({{meta.retrieved_text}}), coloured by the cypher its mappers recorded. Grey dots have no cypher tag: the box is mapped but nobody has recorded its cypher. Zoomed out, the dots are drawn in no particular order so the colours show the real mix (Edward VIII on top); zoomed in, older reigns are drawn on top. Tap a dot for details and a link to the box in OpenStreetMap. Click the map to let the scroll wheel zoom it.</div>
+</div>
+
+<h2><span class="n">02 · Seven monarchs and a crown</span>Who is on Britain's boxes</h2>
+<p>Elizabeth II dominates. Of the {{tag.dated|int}} boxes with a cypher, {{reigns.5.n|int}} ({{reigns.5.share|pct}}) carry EIIR. Her reign lasted seventy years and spanned the great expansion of the network, and every box replaced in that time got her cypher. George V comes second with {{reigns.2.n|int}}, then George VI with {{reigns.4.n|int}}, Scotland's crown with {{reigns.6.n|int}}, Victoria with {{reigns.0.n|int}} and Edward VII with {{reigns.1.n|int}}. Charles III has {{reigns.7.n|int}} mapped so far; the first box with his cypher was unveiled at Great Cambourne in Cambridgeshire on 12 July 2024.</p>
+<div class="figure">
+  <div class="fig-h">Mapped post boxes by royal cypher</div>
+  <div class="fig-sub">UK boxes in OpenStreetMap with a cypher recorded. Scottish crown: boxes in Scotland made since 1953, which carry the Crown of Scotland instead of EIIR.</div>
+  <div class="chart" id="reigns"></div>
+  <div class="src">Not shown: {{tag.none|int}} boxes recorded as having no cypher (among them Victorian "anonymous" boxes of 1879 to 1887, private boxes and some modern ones), {{tag.unclear|int}} recorded as unclear or with two values, and {{tag.untagged|int}} with no cypher tag at all.</div>
+</div>
+<p>Counts flatter long reigns, so here is the same thing per year of each reign. Victoria's boxes had 48 years to be made (the first mainland box went up in Carlisle in 1853), but only {{reigns.0.per_year|int}} survive for each of those years, against {{reigns.5.per_year|int}} a year for Elizabeth II. Partly that is survival: a box on a busy street gets hit, moved, replaced. Partly it is growth: there were simply fewer boxes in the 1860s. Edward VIII stands out: a reign of eleven months has left {{edward8.n|int}} mapped boxes, {{reigns.3.per_year|int}} for each year he was king, double Victoria's rate.</p>
+<div class="figure">
+  <div class="fig-h">Surviving boxes per year of each reign</div>
+  <div class="fig-sub">Mapped boxes divided by the years in which boxes with that cypher could be made: Victoria from 1853, Charles III from July 2024, the Scottish crown from 1953.</div>
+  <div class="chart" id="peryear"></div>
+</div>
+<p>The kind of box changes with the reigns too. Victoria's survivors are mostly wall boxes ({{victoria.wall|int}} of {{victoria.n|int}}), set into a wall where nothing could knock them down. Lamp boxes, the small boxes bolted to a post, are mostly Elizabeth II's: {{reigns.5.lamp|int}} of the {{types.lamp|int}} mapped lamp boxes.</p>
+<div class="figure">
+  <div class="fig-h">Pillar, wall and lamp boxes, by reign</div>
+  <div class="fig-sub">Share of each reign's mapped boxes of each kind, where the kind is recorded.</div>
+  <div class="chart" id="types"></div>
+  <div class="legend"><span><i class="sq" style="background:var(--hot)"></i>Pillar box</span><span><i class="sq" style="background:var(--GVIR)"></i>Wall box</span><span><i class="sq" style="background:var(--gold)"></i>Lamp box</span><span><i class="sq" style="background:var(--untagged)"></i>Other or not recorded</span></div>
+</div>
+
+<h2><span class="n">03 · The Edward VIII hunt</span>A king's 325 days, in cast iron</h2>
+<p>Edward VIII came to the throne on 20 January 1936 and abdicated on 11 December, before he was crowned. Boxes with his cypher, EVIIIR, are the great prize of postbox spotting. Historic Environment Scotland's listing for one in Glasgow says that 271 letter boxes were made in 1936, 161 of them pillar boxes, and that the Letter Box Study Group has identified 171 surviving. It also notes that after the abdication most of his wall and lamp boxes were given new George VI doors, while the pillar boxes mostly kept theirs.</p>
+<p>OpenStreetMap has {{edward8.n|int}} boxes tagged EVIIIR: {{edward8.share_of_lbsg|pct}} of the 171. {{edward8.pillar|int}} of them are pillar boxes, which fits the story of the replaced doors. {{edward8.england|int}} are in England, {{edward8.scotland|int}} in Scotland, {{edward8.wales|int}} in Wales and {{edward8.ni|int}} in Northern Ireland. Greater London has {{edward8.top_areas.0.n|int}} and Glasgow {{edward8.top_areas.1.n|int}}.</p>
+<p class="pull">{{edward8.n|int}} boxes for a king who reigned less than a year: twice as many per year as Victoria.</p>
+<div class="figure">
+  <div class="controls"><button class="btn" id="showE8">Show only Edward VIII on the map</button></div>
+  <details><summary>All {{edward8.n|int}} mapped Edward VIII boxes (tap a row to see it on the map)</summary>
+  <div class="tablewrap"><table class="t" id="e8t"></table></div></details>
+  <div class="src">Place: the nearest town within 3 km in OS Open Names, otherwise the nearest named place. A box tagged EVIIIR in error would be counted here; I have not checked each one.</div>
+</div>
+
+<h2><span class="n">04 · Victoria's survivors</span>{{victoria.n|int}} Victorian boxes</h2>
+<p>The first roadside boxes in the British Isles went up in Jersey in 1852, on the advice of the novelist Anthony Trollope, then a Post Office surveyor. Mainland Britain followed at Botchergate in Carlisle in 1853. OpenStreetMap now has {{victoria.n|int}} boxes with Victoria's VR: {{reigns.0.share|pct1}} of all those with a cypher. {{victoria.replica|int}} of them are tagged as reproduction Penfolds, replicas made at the end of the 1980s that copy the Victorian cypher, so the count of genuine survivors is nearer {{victoria.genuine|int}}.</p>
+<p>The map knows some famous ones. Wikipedia says the oldest pillar boxes still in Royal Mail use are a pair at Framlingham in Suffolk, cast by Handyside of Derby in 1856. OpenStreetMap has two octagonal VR pillar boxes within a kilometre of Framlingham's centre. At Golspie in Sutherland, where a VR wall box of 1861 on the front of the inn is thought to be Scotland's oldest, OpenStreetMap has {{examples.Golspie.within1.VR|int}} VR boxes within a kilometre of the village.</p>
+<h3>Penfolds</h3>
+<p>The most famous Victorian design is the hexagonal Penfold, named after its architect John Penfold and made from 1866 to 1879. Wikipedia says about 300 were made and 150 survive. OpenStreetMap has {{penfold.original|int}} tagged as Penfolds and {{penfold.replica|int}} as reproductions. Wikidata lists {{wikidata.penfold_items|int}} Penfold boxes, mostly from the heritage lists; {{wikidata.penfold_matched|int}} of them sit within 50 metres of a box in OpenStreetMap, and {{wikidata.penfold_matched_tagged|int}} of those are tagged as Penfolds there. Of the OpenStreetMap "originals", {{penfold.original_scotland|int}} are in Scotland, where Wikipedia says there are none, so a few replicas are probably tagged wrongly.</p>
+<div class="figure">
+  <div class="fig-h">Where the Victorian boxes are</div>
+  <div class="fig-sub">Areas with the most VR boxes (counties, unitary authorities and metropolitan districts, from OS Open Names), and the VR share of each area's boxes with a cypher.</div>
+  <div class="tablewrap"><table class="t" id="vrt"></table></div>
+</div>
+
+<h2><span class="n">05 · Scotland's crown</span>The Pillar Box War</h2>
+<p>When the first boxes with Elizabeth II's cypher appeared in Scotland in 1952, some Scots objected: there had never been an Elizabeth I of Scotland. An EIIR pillar box in the Inch district of Edinburgh was tarred, hammered and finally blown up. The Post Office gave way, and from 1953 new boxes in Scotland carried the Crown of Scotland instead of a cypher. Charles III's cypher is not being used in Scotland either.</p>
+<p>The map shows how completely that held. Of the post-1952 boxes in Scotland with a cypher recorded, {{scotland.sc|int}} carry the Scottish crown and only {{scotland.eiir|int}} carry EIIR: {{scotland.sc_share_post52|pct}} crown. Most of the EIIR stragglers are lamp boxes ({{scotland.eiir_types.lamp|int}}). Wikipedia notes one EIIR box put up in Dunoon by mistake in 2018 and scheduled for replacement as soon as it was spotted.</p>
+<div class="cards">
+  <div class="card" style="border-left-color:var(--SC)"><b>Scotland</b><div class="big">{{scotland.sc|int}} <span>Scottish crown boxes</span></div><div class="big">{{scotland.eiir|int}} <span>EIIR boxes</span></div></div>
+  <div class="card"><b>England, Wales and Northern Ireland</b><div class="big">{{reigns.5.n|int}} <span>EIIR boxes in the UK</span></div><div class="big">{{scotland.sc_outside|int}} <span>crown boxes outside Scotland</span></div></div>
+</div>
+
+<h2><span class="n">06 · Street furniture as a clock</span>Is your town Victorian?</h2>
+<p>If boxes keep the cypher of the year they were made, the mix of cyphers in a town should say something about when its streets were laid out. A Victorian suburb ought to keep a few VR and EVIIR boxes; a new town of the 1960s should have almost none. I put each box in its 2022 built-up area (ONS) and kept the {{towns.n|int}} towns and districts with at least {{towns.min_dated|int}} boxes with a cypher and at least {{towns.min_tagged|pct}} of their boxes tagged.</p>
+<p>The oldest street furniture is in inner London and the Victorian resorts and spas. In the City of London, {{towns.oldest.0.pre1910|pct}} of the boxes with a cypher are Victorian or Edwardian; in Hammersmith and Fulham, Haringey, Wandsworth and Camden it is around two in five. Royal Tunbridge Wells, Bournemouth and Cheltenham are the oldest towns outside London and Manchester. At the other end are the post-war new towns, just as the idea predicts: Glenrothes, Stevenage, Crawley, Milton Keynes and Livingston each have no more than two boxes from before 1910.</p>
+<div class="figure">
+  <div class="controls"><div class="seg" role="group" aria-label="Which towns"><button class="btn" data-tw="old" aria-pressed="true">Oldest boxes</button><button class="btn" data-tw="young" aria-pressed="false">Youngest boxes</button></div></div>
+  <div class="fig-sub" id="twSub"></div>
+  <div class="tablewrap"><table class="t" id="twt"></table></div>
+</div>
+<p>But the clock is a rough one. Chichester, Newbury and Chelmsford, all old towns, also sit near the bottom: boxes get replaced, and a town that renewed its boxes looks young. Across all {{towns.n_size|int}} towns in England and Wales with a population, bigger towns have a slightly older mix (Spearman's rank correlation {{towns.rho_size|f2}}), mostly because the big cities have Victorian cores.</p>
+<div class="figure">
+  <div class="fig-h">Share of boxes from before 1910, by town size</div>
+  <div class="fig-sub">Each dot is a built-up area in England and Wales with {{towns.min_dated|int}} or more boxes with a cypher. Vertical: VR and EVIIR boxes as a share of all boxes with a cypher. Horizontal: Census 2021 population (log scale).</div>
+  <div class="chart" id="scatter"></div>
+</div>
+<p>A sharper test needs the town's size before the First World War. For {{check1911.n|int}} towns I have a 1911 census population from my seaside railways study (from A Vision of Britain through Time). The more of today's population a town already had in 1911, the more of its boxes are Victorian or Edwardian: a rank correlation of {{check1911.rho|f2}}. Bournemouth, Margate and Scarborough keep many old boxes; Aylesbury and Bognor Regis, which have grown more than sevenfold since 1911, have almost none. Sixteen towns is a small sample, mostly resorts, so treat this as a promising sign rather than a proof.</p>
+
+<h2><span class="n">07 · How complete is the map?</span>Mapped boxes, not all boxes</h2>
+<p>Everything above counts the boxes that volunteers have mapped and tagged, not the boxes that exist. Royal Mail said in 2002 that there were more than 115,000 post boxes in the UK. OpenStreetMap has {{meta.n|int}}, about {{meta.osm_vs_rm|pct}}. Of those, {{tag.untagged|int}} ({{tag.untagged_share|pct}}) have no cypher tag, so about {{tag.dated|int}} boxes, roughly half of Royal Mail's total, have a known reign.</p>
+<p>The gaps are uneven. Among the {{areas.n_big|int}} areas with at least 300 mapped boxes, the share with a cypher tag runs from {{areas.big_tag_min|pct}} in County Durham to {{areas.big_tag_max|pct}} on the Wirral; the median is {{areas.big_tag_median|pct}}. The "How complete?" layer on the map shows it in {{grid.cell_km|int}} km squares. Northern Ireland has the fewest mapped boxes and the lowest share tagged.</p>
+<p>Does that bias the reign counts? Mappers might record the cypher on an interesting old box and skip a plain modern one. I found little sign of it. In the {{bias.areas|int}} areas where at least 90% of boxes are tagged, Victorian boxes make up {{bias.vr_share|pct1}} of those with a cypher, against {{bias.all_vr_share|pct1}} overall, and boxes from before 1936 {{bias.pre1936_share|pct}} against {{bias.all_pre1936_share|pct}}. If anything, thoroughly mapped areas are slightly younger. Across areas, the share tagged and the share of old boxes are unrelated (rank correlation {{bias.rho_tag_old|f2}}).</p>
+<div class="figure">
+  <div class="fig-h">Share of mapped boxes with a cypher tag</div>
+  <div class="fig-sub">Areas with at least 300 mapped boxes: the most and least completely tagged.</div>
+  <div class="tablewrap"><table class="t" id="tagt"></table></div>
+</div>
+
+<div class="note" id="method">
+  <h3>How I did this</h3>
+  <p><b>Boxes.</b> Every OpenStreetMap object tagged amenity=post_box inside the United Kingdom, read through the QLever OpenStreetMap endpoint on {{meta.retrieved_text}}: {{meta.raw_rows|int}} rows, {{meta.n|int}} boxes once repeated rows were merged. The royal_cypher tag gives the reign: VR, EVIIR, GR (one box tagged GVR), EVIIIR, GVIR, EIIR, CIIIR and scottish_crown. "No" means the box has no cypher; values such as "yes", "obscured", "crown", "ER" or two cyphers at once are counted as unclear. Box kind comes from post_box:type and Penfolds from post_box:design.</p>
+  <p><b>Places.</b> The nearest OS Open Names settlement gives each box its county or unitary area and nation; boxes in Northern Ireland, which OS Open Names does not cover, are found by their position. For towns, each box goes into the 2022 built-up area (ONS) whose centroid is nearest in units of the area's equivalent radius, if within 1.25 radii. I have no built-up area outlines here, so ragged towns lose some outlying boxes and a few boxes land in a neighbour; the town measures are shares, which this affects less than counts. Populations are Census 2021 totals summed from LSOAs.</p>
+  <p><b>Reign years.</b> Victoria from 1853 (the first mainland box) to 22 January 1901; Edward VII to 6 May 1910; George V to 20 January 1936; Edward VIII to 11 December 1936; George VI to 6 February 1952; Elizabeth II to 8 September 2022; Charles III boxes from 12 July 2024; the Scottish crown from 1953.</p>
+  <p><b>What a cypher means.</b> The cypher dates the casting of the door or box, not the day it was put in the street. Boxes are moved and reused, doors are swapped (most Edward VIII wall and lamp boxes were given George VI doors), and reproduction Penfolds carry Victoria's cypher. Victorian "anonymous" boxes of 1879 to 1887 have no cypher. Royal Mail's figure of 115,000 boxes dates from 2002; I have no current count by area, so I cannot say exactly how complete the map is in each place.</p>
+  <p><b>Checks.</b> {{wikidata.matched50|int}} of the {{wikidata.with_coord|int}} post boxes in Wikidata with coordinates (mostly listed boxes) lie within 50 metres of a box in OpenStreetMap, and {{wikidata.matched_dated|int}} of those have a cypher tag. The 1911 test uses census populations from A Vision of Britain through Time, gathered for my <a href="https://tristan-hotham.github.io/seaside-railways/">seaside railways</a> study, against 2021 built-up areas whose boundaries are not the same as the 1911 parishes and boroughs.</p>
+</div>
+<div class="cta">
+  <a class="p" href="https://github.com/Tristan-Hotham/postbox-kings">Data and code</a>
+  <a href="https://doi.org/10.5281/zenodo.23729633">Paper (Zenodo)</a>
+  <a href="https://www.openstreetmap.org/">Edit OpenStreetMap</a>
+  <a href="https://blog.tristanhotham.com/">Blog</a>
+</div>
+<footer>
+  <p>Dr Tristan Hotham, Independent researcher. ORCID 0000-0003-4931-9349. Cite as: Hotham, T. (2026) What's the king on your postbox? Royal cyphers on the post boxes of the United Kingdom in OpenStreetMap. https://doi.org/10.5281/zenodo.23729633</p>
+  <p>I wrote the text, with drafting and editing assistance from Claude (Anthropic), which also helped prepare the analysis code. I reviewed and checked all text and results.</p>
+  <p>Post boxes: © OpenStreetMap contributors, Open Database Licence (ODbL 1.0), via QLever. Places: OS Open Names, contains OS data © Crown copyright and database right 2026 (Open Government Licence v3.0). Built-up areas and Census 2021: Office for National Statistics (Open Government Licence v3.0). Wikidata (CC0). History: Wikipedia, "Pillar box", "Post box", "Royal cypher" and "Pillar Box War" (CC BY-SA 4.0); Historic Environment Scotland listing LB52465 for the Edward VIII figures. 1911 populations: A Vision of Britain through Time (University of Portsmouth). Postcode lookups: postcodes.io. Base map tiles © Esri.</p>
+  <p>The data files derived from OpenStreetMap (the box table, the page's box data and the tables built from them) are released under the ODbL 1.0. Text and figures: CC BY 4.0. Code: MIT. Other studies: <a href="https://tristan-hotham.github.io/war-memorials/">War memorials</a>, <a href="https://tristan-hotham.github.io/seaside-railways/">Seaside railways</a>, <a href="https://blog.tristanhotham.com/">all posts</a>.</p>
+</footer>
+</div>
+<div class="tip" id="tip"></div>
+<button class="btn theme" id="theme" aria-label="Toggle dark mode">◐</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const R = /*RESULTS*/;
+const NS = "http://www.w3.org/2000/svg";
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const el = (t, a = {}, p) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+const fmt = n => n == null ? "n/a" : Math.round(n).toLocaleString("en-GB");
+const pc = (x, d = 0) => (x * 100).toFixed(d) + "%";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const tip = document.getElementById("tip");
+function showTip(h, x, y) { tip.innerHTML = h; tip.style.display = "block"; const w = tip.offsetWidth; x = Math.max(w / 2 + 8, Math.min(innerWidth - w / 2 - 8, x)); tip.style.left = x + scrollX + "px"; tip.style.top = y + scrollY + "px"; }
+function hideTip() { tip.style.display = "none"; }
+function hover(node, h) { node.style.cursor = "pointer"; node.setAttribute("tabindex", "0"); const s = () => { const r = node.getBoundingClientRect(); showTip(h, r.left + r.width / 2, r.top); }; node.addEventListener("pointerenter", s); node.addEventListener("pointerleave", hideTip); node.addEventListener("focus", s); node.addEventListener("blur", hideTip); node.addEventListener("click", e => { s(); e.stopPropagation(); }); }
+document.addEventListener("click", hideTip);
+const redraws = [];
+function resp(box, render) { let last = 0; const go = (force) => { const w = Math.max(280, Math.round(box.clientWidth)); if (!force && Math.abs(w - last) < 4) return; last = w; box.innerHTML = ""; render(w, w < 560); }; new ResizeObserver(() => go()).observe(box); go(); redraws.push(() => go(true)); }
+const lbl = (svg, x, y, s, cls = "lab", anchor = "start") => { const t = el("text", { x, y, class: cls, "text-anchor": anchor }, svg); t.textContent = s; return t; };
+const isDark = () => { const r = document.documentElement; return r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; };
+document.getElementById("theme").onclick = () => { const r = document.documentElement; r.dataset.theme = isDark() ? "light" : "dark"; redraws.forEach(f => f()); };
+
+/* reigns */
+const RCODE = ["VR", "EVIIR", "GR", "EVIIIR", "GVIR", "EIIR", "SC", "CIIIR", "none", "unclear", "untagged"];
+const RNAME = { VR: "Victoria", EVIIR: "Edward VII", GR: "George V", EVIIIR: "Edward VIII", GVIR: "George VI", EIIR: "Elizabeth II", SC: "Scottish crown", CIIIR: "Charles III", none: "No cypher", unclear: "Unclear", untagged: "Cypher not recorded" };
+const RSPAN = Object.fromEntries(R.reigns.map(r => [r.code, r.span]));
+const RLONG = Object.fromEntries(R.reigns.map(r => [r.code, r.name]));
+const ORDER = ["VR", "EVIIR", "GR", "EVIIIR", "GVIR", "EIIR", "SC", "CIIIR"];
+const TYPES = ["Pillar box", "Wall box", "Lamp box", "Other kind", "Kind not recorded"];
+
+/* hero mark: a pillar box whose cypher cycles through the reigns */
+(() => { const g = document.getElementById("heroMark");
+  el("rect", { x: 18, y: 186, width: 84, height: 10, rx: 2, fill: "var(--fg)", opacity: .85 }, g);
+  el("rect", { x: 26, y: 52, width: 68, height: 136, rx: 6, fill: "var(--hot)" }, g);
+  el("path", { d: "M18 56 Q60 2 102 56 Z", fill: "var(--hot)" }, g);
+  el("rect", { x: 16, y: 50, width: 88, height: 10, rx: 3, fill: "var(--hot)", stroke: "var(--bg)", "stroke-width": 1.5 }, g);
+  el("rect", { x: 38, y: 72, width: 44, height: 6, rx: 3, fill: "var(--fg)" }, g);
+  el("rect", { x: 36, y: 128, width: 48, height: 26, rx: 2, fill: "var(--bg)", opacity: .9 }, g);
+  const t = el("text", { x: 60, y: 108, "text-anchor": "middle", style: "font:900 21px var(--display);fill:#fff" }, g);
+  const cyc = ["VR", "EVIIR", "GR", "EVIIIR", "GVIR", "EIIR", "CIIIR"]; let i = 0;
+  const set = c => { t.textContent = c; t.style.fontSize = c.length > 4 ? "14px" : c.length > 2 ? "18px" : "22px"; }; set(cyc[0]);
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) setInterval(() => { i = (i + 1) % cyc.length; set(cyc[i]); }, 1600);
+  el("path", { d: "M50 92 l4 -7 l6 5 l6 -5 l4 7 z", fill: "#fff" }, g);
+})();
+
+/* ===== data ===== */
+let BOX = null, PLACES = null, lmap, boxLayer, coverLayer, hereMarker, ringMarker;
+const vis = new Set(RCODE);
+let layerMode = "boxes";
+const COL = () => Object.fromEntries(RCODE.map(c => [c, css("--" + c)]));
+let colours = COL();
+const DRAW_ORDER = ["untagged", "none", "unclear", "EIIR", "SC", "GVIR", "CIIIR", "GR", "EVIIR", "VR", "EVIIIR"].map(c => RCODE.indexOf(c));
+let grid = {};  // 0.2 degree buckets
+function buildIndex() { grid = {}; BOX.forEach((b, i) => { const k = Math.floor(b[0] * 5) + ":" + Math.floor(b[1] * 5); (grid[k] = grid[k] || []).push(i); }); }
+function bucketsIn(s, w, n, e) { const out = []; for (let a = Math.floor(s * 5); a <= Math.floor(n * 5); a++) for (let o = Math.floor(w * 5); o <= Math.floor(e * 5); o++) { const g = grid[a + ":" + o]; if (g) out.push(g); } return out; }
+function rad(z) { return z <= 5 ? 1.1 : z <= 6 ? 1.5 : z <= 7 ? 2 : z <= 9 ? 2.8 : z <= 11 ? 4 : z <= 13 ? 5.5 : 7; }
+const BoxLayer = window.L && L.GridLayer.extend({
+  createTile(c) {
+    const t = document.createElement("canvas"), s = this.getTileSize(); t.width = s.x; t.height = s.y;
+    if (!BOX) return t;
+    const ctx = t.getContext("2d"), z = c.z, nw = c.scaleBy(s), r = rad(z), pad = r + 1;
+    const p0 = lmap.unproject([nw.x - pad, nw.y - pad], z), p1 = lmap.unproject([nw.x + s.x + pad, nw.y + s.y + pad], z);
+    const B = bucketsIn(p1.lat, p0.lng, p0.lat, p1.lng);
+    const layers = DRAW_ORDER.map(() => []), mixed = z < 10;
+    // zoomed out: boxes drawn in data order (so the colours show the real mix), Edward VIII on top; zoomed in: older reigns on top
+    B.forEach(g => g.forEach(i => { const b = BOX[i]; if (!vis.has(RCODE[b[2]])) return; layers[mixed && b[2] !== 3 && b[2] < 8 ? DRAW_ORDER.indexOf(5) : DRAW_ORDER.indexOf(b[2])].push(b); }));
+    const bg = css("--bg");
+    ctx.strokeStyle = bg; ctx.lineWidth = z >= 10 ? 1 : .4;
+    layers.forEach(L1 => L1.forEach(b => { const code = RCODE[b[2]]; ctx.fillStyle = colours[code];
+      const rr = (code === "untagged" || code === "none" || code === "unclear") ? Math.max(1, r * .7) : (code === "EVIIIR" ? r * 1.25 : r);
+      const p = lmap.project([b[0], b[1]], z); const x = p.x - nw.x, y = p.y - nw.y; ctx.beginPath(); ctx.arc(x, y, rr, 0, 6.2832); ctx.fill(); if (z >= 8) ctx.stroke(); }));
+    return t;
+  }
+});
+function km(a1, o1, a2, o2) { const k = Math.cos((a1 + a2) / 2 * Math.PI / 180); return Math.hypot((o2 - o1) * k, a2 - a1) * 111.2; }
+function osmUrl(id) { return id > 0 ? `https://www.openstreetmap.org/node/${id}` : `https://www.openstreetmap.org/way/${-id}`; }
+function boxPopup(b, dist) {
+  const code = RCODE[b[2]], des = DESIGNS[b[4]] || "";
+  return `<div class="pop"><b class="t" style="color:${colours[code]}">${RNAME[code]}</b><div class="c">${RSPAN[code] ? esc(RLONG[code] + ", " + RSPAN[code]) : code === "untagged" ? "Nobody has recorded this box's cypher yet" : code === "none" ? "Recorded as having no cypher" : "Cypher recorded as unclear"}</div><dl><dt>Kind</dt><dd>${TYPES[b[3]]}</dd>${des ? `<dt>Design</dt><dd>${esc(des.replace(/_/g, " "))}</dd>` : ""}${dist != null ? `<dt>Distance</dt><dd>${dist < 1 ? Math.round(dist * 100) * 10 + " m" : dist.toFixed(1) + " km"}</dd>` : ""}</dl><a href="${osmUrl(b[5])}" target="_blank" rel="noopener">This box in OpenStreetMap</a></div>`;
+}
+let DESIGNS = [];
+function legend() {
+  const box = document.getElementById("legend");
+  if (layerMode === "cover") { box.innerHTML = `<span>Share of mapped boxes with a cypher tag, ${R.grid.cell_km} km squares:</span>` + [["under 25%", 0.1], ["25 to 49%", 0.4], ["50 to 74%", 0.6], ["75 to 89%", 0.8], ["90% or more", 0.95]].map(([l, v]) => `<span><i class="sq" style="background:${coverCol(v)}"></i>${l}</span>`).join(""); return; }
+  box.innerHTML = ORDER.map(c => `<span><i style="background:var(--${c})"></i>${RNAME[c]}</span>`).join("") + `<span><i style="background:var(--untagged)"></i>Cypher not recorded</span>`;
+}
+function coverCol(v) { const c = ["#B8432F", "#DE8A5A", "#E9C98E", "#8DB59A", "#2E7D4F"]; return c[v < .25 ? 0 : v < .5 ? 1 : v < .75 ? 2 : v < .9 ? 3 : 4]; }
+function tileUrl() { return `https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_${isDark() ? "Dark" : "Light"}_Gray_Base/MapServer/tile/{z}/{y}/{x}`; }
+let tiles;
+(() => {
+  if (!window.L) { document.getElementById("lmap").innerHTML = '<p style="padding:16px">The map library did not load.</p>'; return; }
+  lmap = L.map("lmap", { zoomSnap: 0.5, minZoom: 5, maxZoom: 17, scrollWheelZoom: false });
+  lmap.fitBounds([[50.0, -7.6], [58.7, 1.8]], { padding: innerWidth < 600 ? [0, 0] : [10, 10] });
+  tiles = L.tileLayer(tileUrl(), { attribution: 'Tiles &copy; Esri | Post boxes &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors', maxZoom: 17 }).addTo(lmap);
+  boxLayer = new BoxLayer({ updateWhenZooming: false, keepBuffer: 2 }).addTo(lmap);
+  coverLayer = L.layerGroup(R.grid_cells.filter(c => c[2] >= 5).map(c => L.polygon(c[5], { weight: .4, color: "#fff", fillColor: coverCol(c[3] / c[2]), fillOpacity: .72 }).bindTooltip(`${fmt(c[2])} mapped boxes, ${pc(c[3] / c[2])} with a cypher tag; ${fmt(c[4])} Victorian`)));
+  lmap.on("click", e => { lmap.scrollWheelZoom.enable(); if (!BOX || layerMode !== "boxes") return;
+    const z = lmap.getZoom(), p = lmap.project(e.latlng, z), r = rad(z) + 6; let best = null, bd = 1e9;
+    const a = lmap.unproject([p.x - r, p.y - r], z), b = lmap.unproject([p.x + r, p.y + r], z);
+    bucketsIn(b.lat, a.lng, a.lat, b.lng).forEach(g => g.forEach(i => { const q = BOX[i]; if (!vis.has(RCODE[q[2]])) return; const pp = lmap.project([q[0], q[1]], z), d = Math.hypot(pp.x - p.x, pp.y - p.y); const pri = d - (q[2] < 8 ? 2 : 0); if (pri < bd && d <= r) { bd = pri; best = q; } }));
+    if (best) L.popup({ maxWidth: 290 }).setLatLng([best[0], best[1]]).setContent(boxPopup(best)).openOn(lmap); });
+  lmap.getContainer().addEventListener("mouseleave", () => lmap.scrollWheelZoom.disable());
+  legend();
+  redraws.push(() => { tiles.setUrl(tileUrl()); colours = COL(); boxLayer.redraw(); legend(); });
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => redraws.forEach(f => f()));
+  fetch("data/boxes_page.json").then(r => r.json()).then(j => { BOX = j.rows; DESIGNS = j.designs; buildIndex(); boxLayer.redraw(); if (pending) { const p = pending; pending = null; answer(p); } })
+    .catch(() => { document.getElementById("answer").innerHTML = '<div class="pn">The box data could not be loaded here.</div>'; });
+})();
+/* reign buttons */
+(() => { const box = document.getElementById("reignBtns");
+  const btns = [["all", "All"], ...ORDER.map(c => [c, RNAME[c]])];
+  box.innerHTML = btns.map(([k, l]) => `<button class="btn" data-r="${k}" aria-pressed="${k === "all"}">${k !== "all" ? `<i style="background:var(--${k})"></i>` : ""}${l}</button>`).join("");
+  box.addEventListener("click", e => { const b = e.target.closest("[data-r]"); if (!b) return; setReign(b.dataset.r); });
+})();
+function setReign(k) {
+  vis.clear(); if (k === "all") RCODE.forEach(c => vis.add(c)); else vis.add(k);
+  document.querySelectorAll("[data-r]").forEach(x => x.setAttribute("aria-pressed", x.dataset.r === k));
+  if (layerMode !== "boxes") setLayer("boxes"); else boxLayer.redraw();
+}
+function setLayer(m) { layerMode = m; document.querySelectorAll("[data-layer]").forEach(x => x.setAttribute("aria-pressed", x.dataset.layer === m));
+  if (m === "cover") { lmap.removeLayer(boxLayer); coverLayer.addTo(lmap); } else { lmap.removeLayer(coverLayer); boxLayer.addTo(lmap); boxLayer.redraw(); } legend(); }
+document.querySelectorAll("[data-layer]").forEach(b => b.onclick = () => setLayer(b.dataset.layer));
+document.getElementById("showE8").onclick = () => { setReign("EVIIIR"); document.getElementById("lmap").scrollIntoView({ behavior: "smooth", block: "center" }); };
+
+/* ===== finder ===== */
+let pending = null;
+function answer(pl) {
+  if (!BOX) { pending = pl; document.getElementById("answer").innerHTML = '<div class="pn">Loading the boxes...</div>'; return; }
+  const near = {}, within = {}; let oldest1 = null;
+  BOX.forEach(b => { if (Math.abs(b[0] - pl.lat) > 0.6) return; const d = km(pl.lat, pl.lon, b[0], b[1]); const c = RCODE[b[2]];
+    if (!near[c] || d < near[c].d) near[c] = { d, b };
+    if (d <= 1) within[c] = (within[c] || 0) + 1; });
+  // reigns further than ~60 km: full scan
+  ORDER.forEach(c => { if (!near[c]) BOX.forEach(b => { if (RCODE[b[2]] !== c) return; const d = km(pl.lat, pl.lon, b[0], b[1]); if (!near[c] || d < near[c].d) near[c] = { d, b }; }); });
+  for (const c of ORDER) if (near[c] && near[c].d <= 1) { oldest1 = c; break; }
+  const dist = d => d < 1 ? Math.round(d * 100) * 10 + " m" : d < 10 ? d.toFixed(1) + " km" : Math.round(d) + " km";
+  const art = c => ({ VR: "a Victorian", EVIIR: "an Edward VII", GR: "a George V", EVIIIR: "an Edward VIII", GVIR: "a George VI", EIIR: "an Elizabeth II", SC: "a Scottish crown", CIIIR: "a Charles III" })[c];
+  const kind = b => ["pillar box", "wall box", "lamp box", "box", "box"][b[3]];
+  let head;
+  if (oldest1) { const o = near[oldest1]; head = `The oldest mapped box within a kilometre of ${esc(pl.name)} is <em style="color:var(--${oldest1})">${art(oldest1)} ${kind(o.b)}</em>, ${dist(o.d)} away.`; }
+  else head = `No box with a recorded cypher within a kilometre of ${esc(pl.name)}. The nearest of each reign are below.`;
+  const n1 = Object.values(within).reduce((a, b) => a + b, 0);
+  let h = `<div class="big">${head}</div><ol>`;
+  ORDER.forEach(c => { const x = near[c]; if (!x) return; if (c === "SC" && x.d > 60) return;
+    h += `<li data-c="${c}"><i style="background:var(--${c})"></i><span><b>${RNAME[c]}</b> <span style="color:var(--muted)">${RSPAN[c]}, ${kind(x.b)}</span></span><span>${dist(x.d)}</span></li>`; });
+  h += `</ol><div class="pn">${fmt(n1)} mapped box${n1 === 1 ? "" : "es"} within 1 km${within.untagged ? `, ${fmt(within.untagged)} with no cypher recorded` : ""}. Distances are straight lines from ${pl.kind}. Tap a row to see the box.</div>`;
+  const A = document.getElementById("answer"); A.innerHTML = h;
+  A.querySelectorAll("li[data-c]").forEach(li => li.onclick = () => { const x = near[li.dataset.c]; showBox(x.b, x.d); });
+  if (lmap) { if (hereMarker) lmap.removeLayer(hereMarker); hereMarker = L.circleMarker([pl.lat, pl.lon], { radius: 7, color: css("--fg"), weight: 2.5, fillColor: css("--bg"), fillOpacity: 1 }).addTo(lmap).bindTooltip(esc(pl.name));
+    lmap.setView([pl.lat, pl.lon], oldest1 ? 14 : 12); if (oldest1) ring(near[oldest1].b); }
+}
+function ring(b) { if (ringMarker) lmap.removeLayer(ringMarker); ringMarker = L.circleMarker([b[0], b[1]], { radius: 13, color: css("--fg"), weight: 2, fill: false, interactive: false }).addTo(lmap); }
+function showBox(b, d) { if (layerMode !== "boxes") setLayer("boxes"); lmap.setView([b[0], b[1]], Math.max(lmap.getZoom(), 15)); ring(b); setTimeout(() => L.popup({ maxWidth: 290 }).setLatLng([b[0], b[1]]).setContent(boxPopup(b, d)).openOn(lmap), 250); document.getElementById("lmap").scrollIntoView({ behavior: "smooth", block: "center" }); }
+const norm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+const PCRE = /^([a-z]{1,2}\d[a-z\d]?)\s*(\d[a-z]{2})?$/i;
+let plLoading = null;
+function loadPlaces() { if (PLACES) return Promise.resolve(PLACES); if (plLoading) return plLoading;
+  plLoading = fetch("data/places_search.json").then(r => r.json()).then(j => { PLACES = j.rows.map(a => ({ name: a[0], area: a[1], lat: a[2], lon: a[3], t: a[4], key: norm(a[0]) })); return PLACES; }).catch(() => { plLoading = null; return null; }); return plLoading; }
+(() => {
+  const q = document.getElementById("q"), sug = document.getElementById("sug"); let list = [], sel = -1;
+  q.addEventListener("focus", () => loadPlaces());
+  function render() { sug.innerHTML = list.map((it, i) => `<li role="option" aria-selected="${i === sel}" data-i="${i}">${esc(it.label)} <span>${esc(it.sub)}</span></li>`).join(""); sug.style.display = list.length ? "block" : "none"; q.setAttribute("aria-expanded", list.length > 0); }
+  function update() { const raw = q.value.trim(), t = norm(raw); sel = -1; list = [];
+    const m = raw.replace(/\s+/g, " ").match(PCRE);
+    if (m) list.push({ pc: raw.toUpperCase(), label: raw.toUpperCase(), sub: m[2] ? "postcode, look up with postcodes.io" : "postcode district, look up with postcodes.io" });
+    if (t.length >= 2 && PLACES) { const a = PLACES.filter(p => p.key.startsWith(t)).sort((x, y) => x.t - y.t || x.name.length - y.name.length), b = a.length < 8 ? PLACES.filter(p => !p.key.startsWith(t) && p.key.includes(t)).sort((x, y) => x.t - y.t) : [];
+      list = list.concat([...a, ...b].slice(0, 8).map(p => ({ p, label: p.name, sub: [["city", "town", "suburb", "village"][p.t], p.area].filter(Boolean).join(", ") }))); }
+    render(); }
+  function go(it) { sug.style.display = "none"; q.setAttribute("aria-expanded", "false");
+    if (it.p) { q.value = it.p.name; answer({ name: it.p.name, lat: it.p.lat, lon: it.p.lon, kind: "the place's point in OS Open Names" }); return; }
+    const pcode = it.pc.replace(/\s+/g, ""), full = PCRE.exec(it.pc.replace(/\s+/g, " ")) && /\d[a-z]{2}$/i.test(pcode) && pcode.length > 4;
+    document.getElementById("answer").innerHTML = '<div class="pn">Looking up the postcode...</div>';
+    fetch(full ? `https://api.postcodes.io/postcodes/${encodeURIComponent(pcode)}` : `https://api.postcodes.io/outcodes/${encodeURIComponent(pcode)}`).then(r => r.json()).then(j => {
+      if (!j.result || j.result.latitude == null) throw 0; answer({ name: it.pc, lat: j.result.latitude, lon: j.result.longitude, kind: "the postcode's centre" }); })
+      .catch(() => { document.getElementById("answer").innerHTML = '<div class="pn">That postcode could not be found (or postcodes.io could not be reached). Try a place name.</div>'; }); }
+  q.addEventListener("input", () => { update(); if (!PLACES) loadPlaces().then(() => { if (document.activeElement === q) update(); }); });
+  q.addEventListener("keydown", e => { if (e.key === "Enter" && !list.length) { update(); }
+    if (!list.length) return; if (e.key === "ArrowDown") { sel = Math.min(list.length - 1, sel + 1); render(); e.preventDefault(); } else if (e.key === "ArrowUp") { sel = Math.max(0, sel - 1); render(); e.preventDefault(); } else if (e.key === "Enter") { go(list[Math.max(0, sel)]); e.preventDefault(); } else if (e.key === "Escape") { list = []; render(); } });
+  sug.addEventListener("click", e => { const li = e.target.closest("li[data-i]"); if (li) go(list[+li.dataset.i]); e.stopPropagation(); });
+  document.addEventListener("click", e => { if (e.target !== q) { sug.style.display = "none"; q.setAttribute("aria-expanded", "false"); } });
+  document.getElementById("geo").onclick = () => { if (!navigator.geolocation) return; document.getElementById("answer").innerHTML = '<div class="pn">Finding you...</div>';
+    navigator.geolocation.getCurrentPosition(p => answer({ name: "you", lat: p.coords.latitude, lon: p.coords.longitude, kind: "your location" }), () => { document.getElementById("answer").innerHTML = '<div class="pn">Your location was not available. Try a place name or postcode.</div>'; }); };
+})();
+
+/* ===== charts ===== */
+function hbars(id, rows, opt = {}) {
+  resp(document.getElementById(id), (W, nar) => {
+    const rowH = opt.rowH || 30, m = { l: nar ? 0 : (opt.l || 150), r: 70, t: 4, b: 6 }, H = rows.length * (nar ? rowH + 14 : rowH) + m.t + m.b;
+    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": opt.aria || "" }, document.getElementById(id));
+    const max = opt.max || Math.max(...rows.map(r => r.v)), X = v => m.l + v / max * (W - m.l - m.r);
+    rows.forEach((r, i) => { const y = m.t + i * (nar ? rowH + 14 : rowH) + (nar ? 14 : 0);
+      lbl(svg, nar ? 0 : m.l - 10, nar ? y - 3 : y + 15, r.k, "lab", nar ? "start" : "end");
+      const b = el("rect", { x: m.l, y: y + 3, width: Math.max(2, X(r.v) - m.l), height: rowH - 10, rx: 2, fill: r.c || "var(--hot)" }, svg);
+      if (r.t) hover(b, r.t);
+      lbl(svg, X(r.v) + 6, y + 15, r.lab || fmt(r.v), "lab b"); });
+  });
+}
+const RR = R.reigns;
+hbars("reigns", [...RR].sort((a, b) => b.n - a.n).map(r => ({ k: r.short, v: r.n, c: `var(--${r.code})`, t: `<b>${r.name}</b><br>${r.span}<br>${fmt(r.n)} boxes, ${pc(r.share, 1)} of those with a cypher` })), { aria: "Mapped post boxes by royal cypher" });
+hbars("peryear", RR.map(r => ({ k: r.short, v: r.per_year, lab: fmt(r.per_year), c: `var(--${r.code})`, t: `<b>${r.name}</b><br>${fmt(r.n)} boxes over ${r.years.toFixed(1)} years` })), { aria: "Surviving boxes per year of reign" });
+resp(document.getElementById("types"), (W, nar) => {
+  const rows = RR, rowH = nar ? 44 : 30, m = { l: nar ? 0 : 150, r: 8, t: 4 }, H = rows.length * rowH + 8;
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Box kinds by reign" }, document.getElementById("types"));
+  const cols = ["var(--hot)", "var(--GVIR)", "var(--gold)", "var(--untagged)"];
+  rows.forEach((r, i) => { const y = m.t + i * rowH + (nar ? 14 : 0), parts = [r.pillar, r.wall, r.lamp, r.other_type], tot = r.n; let x = m.l;
+    lbl(svg, nar ? 0 : m.l - 10, nar ? y - 2 : y + 15, r.short, "lab", nar ? "start" : "end");
+    parts.forEach((v, j) => { const w = v / tot * (W - m.l - m.r); const b = el("rect", { x, y: y + 3, width: Math.max(0, w - 1), height: 20, fill: cols[j] }, svg);
+      hover(b, `<b>${r.name}</b><br>${["Pillar", "Wall", "Lamp", "Other or not recorded"][j]}: ${fmt(v)} (${pc(v / tot)})`);
+      if (w > 34) lbl(svg, x + 4, y + 17, pc(v / tot), "lab s").setAttribute("style", "fill:#fff"); x += w; }); });
+});
+/* scatter */
+resp(document.getElementById("scatter"), (W, nar) => {
+  const pts = R.town_rows.filter(t => t.pop && t.nation !== "Scotland"), H = nar ? 300 : 360, m = { l: 44, r: 12, t: 12, b: 42 };
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Share of old boxes by town size" }, document.getElementById("scatter"));
+  const lx = Math.log10, x0 = lx(5000), x1 = lx(600000), X = v => m.l + (lx(v) - x0) / (x1 - x0) * (W - m.l - m.r), Y = v => H - m.b - v / 0.5 * (H - m.t - m.b);
+  [0, .1, .2, .3, .4, .5].forEach(t => { el("line", { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), stroke: "var(--rule)" }, svg); lbl(svg, m.l - 6, Y(t) + 4, pc(t), "lab m s", "end"); });
+  [10000, 30000, 100000, 300000].forEach(t => { lbl(svg, X(t), H - m.b + 16, t >= 1e6 ? t / 1e6 + "m" : t / 1000 + "k", "lab m s", "middle"); });
+  lbl(svg, (m.l + W - m.r) / 2, H - 6, "Census 2021 population (log scale)", "lab m s", "middle");
+  pts.forEach(t => { const c = el("circle", { cx: X(Math.max(5000, t.pop)), cy: Y(Math.min(.5, t.pre1910)), r: nar ? 4 : 5, fill: t.pre1910 >= .25 ? "var(--VR)" : t.pre1936 < .08 ? "var(--hot)" : "var(--muted)", "fill-opacity": .75, stroke: "var(--bg)" }, svg);
+    hover(c, `<b>${esc(t.name)}</b><br>${fmt(t.pop)} people (2021)<br>${fmt(t.dated)} boxes with a cypher<br>${pc(t.pre1910)} before 1910, ${pc(t.pre1936)} before 1936`); });
+  [["Stevenage", "end", -6, -10], ["Milton Keynes", "start", 6, -10], ["City of London", "start", 8, -6], ["Royal Tunbridge Wells", "start", 8, -6], ["Cheltenham", "end", -8, -8]].forEach(([nm, an, dx, dy]) => { const t = pts.find(p => p.name === nm); if (!t) return;
+    const x = X(Math.max(5000, t.pop)), y = Y(Math.min(.5, t.pre1910)); lbl(svg, x + dx, y + dy, nm, "lab s b", an); });
+});
+/* tables */
+document.getElementById("e8t").innerHTML = `<thead><tr><th>Place</th><th class="wide">Area</th><th>Kind</th></tr></thead><tbody>` +
+  R.edward8.list.map((r, i) => `<tr class="go" data-i="${i}"><td>${esc(r.place)}<small>${esc(r.nation)}</small></td><td class="wide">${esc(r.area)}</td><td>${esc(r.type)}</td></tr>`).join("") + "</tbody>";
+document.getElementById("e8t").addEventListener("click", e => { const tr = e.target.closest("tr[data-i]"); if (!tr) return; const r = R.edward8.list[+tr.dataset.i];
+  if (!BOX) return; let best = null, bd = 1e9; BOX.forEach(b => { if (b[2] !== 3) return; const d = km(r.lat, r.lon, b[0], b[1]); if (d < bd) { bd = d; best = b; } }); if (best) showBox(best); });
+document.getElementById("vrt").innerHTML = `<thead><tr><th>Area</th><th class="num">VR boxes</th><th class="num wide">With a cypher</th><th class="num">VR share</th></tr></thead><tbody>` +
+  R.areas.vr_top.map(r => `<tr><td>${esc(r.area)}</td><td class="num">${fmt(r.VR)}</td><td class="num wide">${fmt(r.dated)}</td><td class="num">${pc(r.share, 1)}</td></tr>`).join("") + "</tbody>";
+document.getElementById("tagt").innerHTML = `<thead><tr><th>Area</th><th class="num">Mapped boxes</th><th class="num">With cypher tag</th></tr></thead><tbody>` +
+  R.areas.tag_top.map(r => `<tr><td>${esc(r.area)}</td><td class="num">${fmt(r.n)}</td><td class="num">${pc(r.share)}</td></tr>`).join("") +
+  `<tr><td colspan="3" style="color:var(--muted)">...</td></tr>` + [...R.areas.tag_bottom].reverse().map(r => `<tr><td>${esc(r.area)}</td><td class="num">${fmt(r.n)}</td><td class="num">${pc(r.share)}</td></tr>`).join("") + "</tbody>";
+(() => { const t = document.getElementById("twt"), sub = document.getElementById("twSub");
+  const show = k => { const rows = k === "old" ? R.towns.oldest : R.towns.youngest;
+    sub.textContent = k === "old" ? "Built-up areas with the highest share of Victorian and Edwardian (VR and EVIIR) boxes among those with a cypher. Inner London boroughs are separate built-up areas in the ONS 2022 data." : "Built-up areas with the lowest share of boxes from before 1936 (VR, EVIIR, GR and EVIIIR).";
+    t.innerHTML = `<thead><tr><th>Town or district</th><th class="num wide">People (2021)</th><th class="num">With cypher</th><th class="num">Before 1910</th><th class="num">Before 1936</th></tr></thead><tbody>` +
+      rows.map(r => `<tr class="go" data-lat="${r.lat}" data-lon="${r.lon}" data-n="${esc(r.name)}"><td>${esc(r.name)}<small>${r.nation}</small></td><td class="num wide">${r.pop ? fmt(r.pop) : "n/a"}</td><td class="num">${fmt(r.dated)}</td><td class="num">${pc(r.pre1910)}</td><td class="num">${pc(r.pre1936)}</td></tr>`).join("") + "</tbody>"; };
+  t.addEventListener("click", e => { const tr = e.target.closest("tr[data-lat]"); if (!tr) return; answer({ name: tr.dataset.n, lat: +tr.dataset.lat, lon: +tr.dataset.lon, kind: "the built-up area's centroid" }); document.querySelector(".finder").scrollIntoView({ behavior: "smooth" }); });
+  document.querySelectorAll("[data-tw]").forEach(b => b.onclick = () => { document.querySelectorAll("[data-tw]").forEach(x => x.setAttribute("aria-pressed", x === b)); show(b.dataset.tw); });
+  show("old"); })();
+</script>
+</body>
+</html>

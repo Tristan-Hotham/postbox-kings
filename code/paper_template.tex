@@ -1,0 +1,206 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Pagella}
+\newfontfamily\headfont{Inter}[UprightFont=*-ExtraBold,BoldFont=*-ExtraBold,Extension=.otf,Path=/usr/share/fonts/opentype/inter/]
+\usepackage[a4paper,margin=2.3cm]{geometry}
+\usepackage{graphicx,booktabs,float,caption,array}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+\usepackage{setspace}
+\setstretch{1.05}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.75}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\titleformat{\section}{\headfont\Large}{\thesection}{0.8em}{}
+\titleformat{\subsection}{\headfont\large}{\thesubsection}{0.8em}{}
+\captionsetup{font=small,labelfont=bf}
+\urlstyle{same}
+\hypersetup{pdftitle={What's the King on Your Postbox? Royal Cyphers on the Post Boxes of the United Kingdom in OpenStreetMap},pdfauthor={Tristan Hotham}}
+
+\begin{document}
+\begin{center}
+{\Large\bfseries What's the King on Your Postbox?\\[2pt] Royal Cyphers on the Post Boxes of the United Kingdom\\[2pt] in OpenStreetMap\par}
+\vspace{1.2em}
+{\large Tristan Hotham\par}
+\vspace{0.3em}
+{\small Independent researcher\\
+ORCID: 0000-0003-4931-9349\\
+DOI: \href{https://doi.org/10.5281/zenodo.23729633}{https://doi.org/10.5281/zenodo.23729633}\par}
+\vspace{0.8em}
+2026
+\end{center}
+
+\begin{quote}
+\small
+\begin{center}\textbf{Abstract}\end{center}
+British post boxes carry the royal cypher of the monarch who reigned when they were made, so the boxes on a street are a dated, if unplanned, record of when it was furnished. I use OpenStreetMap, whose volunteers record a royal cypher tag on many boxes, to count the surviving boxes of each reign across the United Kingdom. On {{meta.retrieved_text}} OpenStreetMap held {{meta.n|int}} UK post boxes, about {{meta.osm_vs_rm|pct}} of the 115,000 that Royal Mail reported in 2002, and {{tag.dated|int}} had a cypher of a known reign. Elizabeth II accounts for {{reigns.5.share|pct}} of these; Victoria for {{reigns.0.n|int}} boxes ({{reigns.0.share|pct1}}), most of them wall boxes; and Edward VIII, who reigned for less than a year, for {{edward8.n|int}}, which is {{edward8.share_of_lbsg|pct}} of the 171 survivors identified by the Letter Box Study Group. In Scotland {{scotland.sc_share_post52|pct}} of post-1952 boxes with a recorded cypher carry the Crown of Scotland, the outcome of the Pillar Box War of 1952 and 1953. Among {{towns.n|int}} well-mapped towns, the share of boxes from before 1910 ranges from {{towns.oldest.0.pre1910|pct}} in the City of London to almost none in post-war new towns, and in a small check of {{check1911.n|int}} towns it rises with the share of today's population already present in 1911 (Spearman's $\rho$ = {{check1911.rho|f2}}). Cypher tagging is uneven, from {{areas.big_tag_min|pct}} to {{areas.big_tag_max|pct}} of boxes by area, but I find little sign that it favours old boxes. The results describe mapped boxes, not every box, and a cypher dates a casting rather than an installation.
+
+\textbf{Keywords:} post boxes; pillar boxes; royal cypher; street furniture; OpenStreetMap; volunteered geographic information; Royal Mail; Pillar Box War; urban history; open data
+\end{quote}
+
+\section{Introduction}
+
+The red pillar box is one of the most familiar objects in the British street. Since the first roadside boxes went up in Jersey in 1852, on the recommendation of the novelist Anthony Trollope, then a surveyor for the Post Office, and the first in mainland Britain at Botchergate in Carlisle in 1853, boxes have been cast with the cypher of the reigning monarch on the door or body (Wikipedia contributors 2026a; 2026b). A box from the reign of Victoria says VR; one from George V says GR; one from Elizabeth II says EIIR, except in Scotland, where after a campaign of vandalism in 1952 and 1953 new boxes carried the Crown of Scotland instead (Wikipedia contributors 2026c; 2026d). Because boxes are rarely removed for their own sake, and out-of-use boxes in conservation areas are often left in place and painted black (Wikipedia contributors 2026a), the cyphers on a town's boxes are a record of its past that no one set out to keep.
+
+This note asks three questions of that record. First, how many boxes of each reign survive in the United Kingdom, and where? This includes the rare boxes of Edward VIII, who reigned from 20 January to 11 December 1936, and the Victorian survivors, among them the hexagonal Penfold boxes of 1866 to 1879. Second, can the mix of cyphers in a town tell us when its streets were laid out: do Victorian suburbs keep Victorian boxes and post-war new towns have none? Third, how much of what we see is the map rather than the boxes, given that the data come from volunteers?
+
+The data are from OpenStreetMap (OpenStreetMap contributors 2026), the volunteered world map, where many post boxes carry a \texttt{royal\_cypher} tag recorded by people who have walked up to them. An interactive version, with a map of every box and a search for the oldest box near any place or postcode, is at \url{https://tristan-hotham.github.io/postbox-kings/}.
+
+\section{Data}
+
+\subsection{Post boxes in OpenStreetMap}
+
+I extracted every OpenStreetMap object tagged \texttt{amenity=post\_box} inside the boundary of the United Kingdom (relation 62149) through the QLever SPARQL engine's OpenStreetMap endpoint (Bast and Buchhold 2017) on {{meta.retrieved_text}}. The query returned {{meta.raw_rows|int}} rows, one per object and combination of tag values, which collapse to {{meta.n|int}} boxes ({{meta.nodes|int}} mapped as points). For each box I kept the tags \texttt{royal\_cypher}, \texttt{post\_box:type} (pillar, wall, lamp and others), \texttt{post\_box:design} (for example \texttt{penfold}, \texttt{reproduction\_penfold}, \texttt{type\_a}), \texttt{post\_box:mounting}, \texttt{ref} (the Royal Mail box number), and the listed-building tag where present. OpenStreetMap data are available under the Open Database Licence.
+
+Royal Mail estimated in 2002 that there were more than 115,000 post boxes in the United Kingdom (Wikipedia contributors 2026a). I have no more recent count by area, so OpenStreetMap's coverage can be judged only against this national figure: {{meta.n|int}} mapped boxes is about {{meta.osm_vs_rm|pct}} of it.
+
+\subsection{Places, towns and populations}
+
+Each box was given the county or unitary area and the nation of its nearest populated place in Ordnance Survey's OS Open Names (Ordnance Survey 2026). Boxes in Northern Ireland, which OS Open Names does not cover, were identified by position. For town-level measures I used the Office for National Statistics' 2022 built-up areas for Great Britain and Census 2021 usual resident populations summed from Lower Layer Super Output Areas through the ONS best-fit lookup (Office for National Statistics 2023a; 2023b). For a validation check I used 1911 census populations from A Vision of Britain through Time (University of Portsmouth 2026), which I had collected for an earlier study of seaside resorts (Hotham 2026).
+
+\subsection{Cross-checks and history}
+
+Wikidata (Wikidata contributors 2026) lists {{wikidata.items|int}} post boxes in the United Kingdom, {{wikidata.heritage|int}} of them with a heritage designation; I use them to check whether listed boxes appear in OpenStreetMap. Historical context comes from the English Wikipedia articles on the pillar box, the post box, the royal cypher and the Pillar Box War (Wikipedia contributors 2026a; 2026b; 2026c; 2026d), and the figures for Edward VIII's boxes from Historic Environment Scotland's listing of an Edward VIII pillar box in Glasgow (Historic Environment Scotland n.d.).
+
+\section{Methods}
+
+\subsection{From cypher tag to reign}
+
+I mapped the \texttt{royal\_cypher} values to reigns: VR (Victoria), EVIIR (Edward VII), GR (George V; one box is tagged GVR), EVIIIR (Edward VIII), GVIR (George VI), EIIR (Elizabeth II), CIIIR (Charles III) and \texttt{scottish\_crown}. A value of \texttt{no} means the box has no cypher: this covers the Victorian ``anonymous'' boxes of 1879 to 1887, from which the cypher was omitted (Wikipedia contributors 2026a), private boxes and some modern ones. Values such as \texttt{yes}, \texttt{obscured}, \texttt{crown} or \texttt{ER}, and boxes with two cyphers, are treated as unclear. A box with no \texttt{royal\_cypher} tag is untagged. Of the {{meta.n|int}} boxes, {{tag.dated|int}} have a reign, {{tag.none|int}} have no cypher, {{tag.unclear|int}} are unclear and {{tag.untagged|int}} ({{tag.untagged_share|pct}}) are untagged.
+
+\subsection{Years of each reign}
+
+To compare reigns of very different length I divide each reign's boxes by the years in which boxes with that cypher could be made: for Victoria from 1853, the year of the first mainland box, to her death on 22 January 1901; for Edward VII to 6 May 1910; George V to 20 January 1936; Edward VIII to 11 December 1936; George VI to 6 February 1952; Elizabeth II to 8 September 2022; the Scottish crown from 1953; and Charles III from 12 July 2024, when the first box with his cypher was unveiled in Great Cambourne, Cambridgeshire (Wikipedia contributors 2026a), to the date of the data. This is a survival rate per year of production, not a rate of manufacture: it mixes how many boxes were made with how many have lasted.
+
+\subsection{Towns}
+
+ONS publishes the centroid and area of each 2022 built-up area, but I did not have the outlines. I therefore placed each box in the built-up area whose centroid is nearest in units of that area's equivalent radius (the radius of a circle of the same area), provided the box lies within 1.25 equivalent radii. Ragged or elongated towns lose some outlying boxes and a few boxes are placed in a neighbouring town; since the town measures are shares of boxes, this matters less than it would for counts. {{towns.boxes_in_bua|int}} boxes fall in a built-up area. I kept towns with at least {{towns.min_dated|int}} boxes of known reign and at least {{towns.min_tagged|pct}} of their mapped boxes tagged, which leaves {{towns.n|int}} towns and districts; ONS treats each London borough as a separate built-up area. For each town I compute the share of boxes of known reign that are Victorian or Edwardian (VR or EVIIR, before 1910) and the share from before 1936 (adding GR and EVIIIR).
+
+As a validation, I matched towns to the 1911 populations of the resorts and inland towns in my seaside study by name and distance (within 6 km) and compared the ratio of 1911 to 2021 population with the share of pre-1910 boxes, using Spearman's rank correlation. The 1911 figures refer to parishes or boroughs whose boundaries differ from the 2021 built-up areas.
+
+\subsection{Coverage and bias}
+
+To describe the completeness of tagging I computed, for each area with at least 300 mapped boxes and for 20 km squares of the British National Grid, the share of mapped boxes with a cypher tag. To test whether tagging favours old boxes I compared the reign mix in the areas where at least 90\% of boxes are tagged with the mix overall, and computed the rank correlation between areas' tagging share and their share of pre-1910 boxes. For the Wikidata check I took the nearest OpenStreetMap box to each Wikidata post box with coordinates and counted matches within 50 metres.
+
+\section{Results}
+
+\subsection{The reigns}
+
+Table~\ref{tab:reigns} and Figure~\ref{fig:reigns} give the counts. Elizabeth II's EIIR appears on {{reigns.5.n|int}} boxes, {{reigns.5.share|pct}} of those with a known reign. George V follows with {{reigns.2.n|int}}, George VI with {{reigns.4.n|int}}, the Scottish crown with {{reigns.6.n|int}}, Victoria with {{reigns.0.n|int}} and Edward VII with {{reigns.1.n|int}}. Edward VIII has {{edward8.n|int}} and Charles III {{reigns.7.n|int}}. Boxes from before 1910 make up {{old.pre1910_share|pct1}} of the dated boxes, and boxes from before 1936 {{old.pre1936_share|pct1}}.
+
+{{TABLE_REIGNS}}
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=\linewidth]{f_reigns.png}
+\caption{Mapped post boxes by royal cypher (a), and the same divided by the years in which boxes with each cypher could be made (b). OpenStreetMap, {{meta.retrieved_text}}.}\label{fig:reigns}
+\end{figure}
+
+Per year of production, Victoria's survivors are the scarcest of the established reigns: {{reigns.0.per_year|int}} a year against {{reigns.5.per_year|int}} for Elizabeth II, {{reigns.2.per_year|int}} for George V and {{reigns.1.per_year|int}} for Edward VII. Fewer boxes were made in the 1850s and 1860s, and a box that has stood for 130 years has had more chances to be hit, moved or replaced, so the low rate combines both. Edward VIII's {{edward8.n|int}} boxes over an eleven-month reign give {{reigns.3.per_year|int}} a year, about twice Victoria's rate.
+
+The kind of box changes with the reign (Figure~\ref{fig:types}). {{victoria.wall|int}} of the {{victoria.n|int}} Victorian boxes are wall boxes, set into walls and so protected from traffic. Edward VIII's are almost all pillar boxes ({{edward8.pillar|int}} of {{edward8.n|int}}). Lamp boxes, small boxes fixed to posts, dominate the later reigns: {{reigns.5.lamp|int}} of the {{types.lamp|int}} mapped lamp boxes are Elizabeth II's.
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=0.92\linewidth]{f_types.png}
+\caption{Pillar, wall and lamp boxes as shares of each reign's mapped boxes. ``Other or not recorded'' includes boxes with no \texttt{post\_box:type} tag.}\label{fig:types}
+\end{figure}
+
+\subsection{Edward VIII}
+
+Historic Environment Scotland's listing of an Edward VIII pillar box in Glasgow states that 271 letter boxes were made in 1936, 161 of them pillar boxes, that the Letter Box Study Group has identified 171 surviving, and that after the abdication most of the wall and lamp boxes were given new doors with George VI's cypher while the pillar box doors were mostly left unchanged (Historic Environment Scotland n.d.). OpenStreetMap's {{edward8.n|int}} EVIIIR boxes are {{edward8.share_of_lbsg|pct}} of the 171. That {{edward8.pillar|int}} of them are pillar boxes fits the account of the replaced doors. {{edward8.england|int}} are in England, {{edward8.scotland|int}} in Scotland, {{edward8.wales|int}} in Wales and {{edward8.ni|int}} in Northern Ireland; the largest groups are in Greater London ({{edward8.top_areas.0.n|int}}) and Glasgow ({{edward8.top_areas.1.n|int}}). I have not verified each box, and an EVIIIR tag added in error would be counted.
+
+\subsection{Victoria and the Penfolds}
+
+The {{victoria.n|int}} VR boxes include {{victoria.replica|int}} tagged as reproduction Penfolds, replicas made at the end of the 1980s that copy the Victorian design and cypher; without them there are {{victoria.genuine|int}}. The map (Figure~\ref{fig:map}) shows them across England and Wales, thinner in Scotland and Northern Ireland. Greater London has the most ({{areas.vr_top.0.VR|int}}), followed by Devon ({{areas.vr_top.1.VR|int}}), Kent ({{areas.vr_top.2.VR|int}}) and Cornwall ({{areas.vr_top.3.VR|int}}); among areas with at least 300 boxes of known reign, Devon has the highest Victorian share ({{areas.vr_share_top.0.share|pct1}}).
+
+Of the {{nearest.towns|int}} towns and cities in OS Open Names, {{nearest.towns_vr1|int}} ({{nearest.towns_vr1_share|pct}}) have a mapped VR box within a kilometre of their OS point, and the median town is {{nearest.towns_vr_median|f1}} km from the nearest one.
+
+Wikipedia records that the oldest pillar boxes still in Royal Mail use are a pair at Framlingham in Suffolk, cast by Andrew Handyside and Company of Derby in 1856 (Wikipedia contributors 2026a). OpenStreetMap has two octagonal VR pillar boxes within a kilometre of Framlingham, the only octagonal VR pillar boxes near the town. For Penfolds, Wikipedia gives about 300 made and 150 surviving, with nearly 100 replicas installed at the end of the 1980s. OpenStreetMap tags {{penfold.original|int}} boxes as original Penfolds and {{penfold.replica|int}} as reproductions. Of the {{wikidata.penfold_items|int}} Penfold boxes in Wikidata, {{wikidata.penfold_matched|int}} lie within 50 metres of an OpenStreetMap box and {{wikidata.penfold_matched_tagged|int}} of these are tagged as Penfolds there. {{penfold.original_scotland|int}} OpenStreetMap ``original'' Penfolds are in Scotland, where Wikipedia states there are none, so a few replicas are probably tagged as originals.
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=0.78\linewidth]{f_map.png}
+\caption{Victorian (VR), Edward VII (EVIIR) and Edward VIII (EVIIIR) post boxes in OpenStreetMap, over all other mapped boxes (grey). Coastline: Natural Earth.}\label{fig:map}
+\end{figure}
+
+\subsection{Scotland's crown}
+
+In Scotland, {{scotland.sc|int}} boxes carry the Crown of Scotland and {{scotland.eiir|int}} carry EIIR, so {{scotland.sc_share_post52|pct}} of the post-1952 boxes with a recorded cypher follow the settlement that ended the Pillar Box War. {{scotland.eiir_types.lamp|int}} of the {{scotland.eiir|int}} EIIR boxes are lamp boxes. No Charles III boxes are mapped in Scotland, in line with reports that his cypher will not be used there (Wikipedia contributors 2026d). Outside Scotland, {{scotland.sc_outside|int}} boxes are tagged with the Scottish crown; {{scotland.sc_outside_border|int}} of them are in north Northumberland close to the border, and the others are scattered across England and Wales, where they may be tagged in error or be boxes moved from Scotland.
+
+\subsection{Street furniture as a clock}
+
+The share of boxes from before 1910 varies widely between towns (Table~\ref{tab:towns}). It is highest in inner London: {{towns.oldest.0.pre1910|pct}} in the City of London and around two in five in Hammersmith and Fulham, Haringey, Wandsworth and Camden. Outside London the oldest mixes are in Manchester, Royal Tunbridge Wells, Bournemouth and Cheltenham. At the other end are Glenrothes, Stevenage, Havant, Newbury, Crawley, Milton Keynes and Livingston, with no more than two pre-1910 boxes each. Several of these are post-war new towns, as the idea predicts, but old towns such as Newbury, Chichester and Chelmsford are also near the bottom: where boxes have been renewed, a town looks younger than it is. The median town has {{towns.median_pre1910|pct1}} of its dated boxes from before 1910 and {{towns.median_pre1936|pct1}} from before 1936.
+
+{{TABLE_TOWNS}}
+
+Across the {{towns.n_size|int}} towns in England and Wales with a Census 2021 population, larger towns have slightly older mixes (Spearman's $\rho$ = {{towns.rho_size|f2}}, $p$ {{towns.p_size|p}}; Figure~\ref{fig:towns}a), which reflects the Victorian cores of the big cities. The validation against 1911 populations is more direct (Figure~\ref{fig:towns}b). For the {{check1911.n|int}} towns that could be matched, the share of pre-1910 boxes rises with the share of the 2021 population already present in 1911 ($\rho$ = {{check1911.rho|f2}}, $p$ {{check1911.p|p}}). For the share before 1936 the association is weaker and not significant ($\rho$ = {{check1911.rho36|f2}}). Bournemouth, Margate and Scarborough keep many old boxes; Aylesbury and Bognor Regis, whose 2021 built-up areas hold more than seven times their 1911 populations, have almost none. The sample is small and mostly seaside resorts.
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=\linewidth]{f_towns.png}
+\caption{(a) Share of boxes of known reign from before 1910 against Census 2021 population, for built-up areas in England and Wales with at least {{towns.min_dated|int}} dated boxes and {{towns.min_tagged|pct}} of boxes tagged. Blue: 25\% or more; red: under 8\% from before 1936. (b) The same share against the 1911 population as a percentage of the 2021 population, for {{check1911.n|int}} towns.}\label{fig:towns}
+\end{figure}
+
+\subsection{How complete is the map?}
+
+Of the {{meta.n|int}} mapped boxes, {{tag.tagged_share|pct}} have a cypher tag, so roughly {{tag.dated|int}} boxes of a known reign stand for the 115,000 or so that exist. Tagging is uneven (Figure~\ref{fig:cover}). Among the {{areas.n_big|int}} areas with at least 300 mapped boxes, the tagged share ranges from {{areas.big_tag_min|pct}} (County Durham) to {{areas.big_tag_max|pct}} (Wirral), with a median of {{areas.big_tag_median|pct}}; {{areas.big_tag_ge90|int}} areas exceed 90\% and {{areas.big_tag_lt50|int}} are below 50\%. Of the {{grid.cells10|int}} 20 km squares with at least ten boxes, {{grid.ge90|int}} are 90\% or more tagged and {{grid.lt50|int}} under half. Northern Ireland has both the fewest mapped boxes ({{nations.3.n|int}}) and the lowest tagged share ({{nations.3.tagged_share|pct}}).
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=0.7\linewidth]{f_cover.png}
+\caption{Share of mapped post boxes with a \texttt{royal\_cypher} tag, in 20 km squares of the British National Grid with five or more boxes.}\label{fig:cover}
+\end{figure}
+
+If mappers recorded cyphers mainly on interesting old boxes, the reign mix would look older than it is where tagging is patchy. I find no sign of this. In the {{bias.areas|int}} areas where at least 90\% of boxes are tagged, Victorian boxes are {{bias.vr_share|pct1}} of those with a cypher (overall {{bias.all_vr_share|pct1}}) and boxes from before 1936 {{bias.pre1936_share|pct1}} (overall {{bias.all_pre1936_share|pct1}}). In the {{bias.poor_areas|int}} areas where under 60\% are tagged the figures are {{bias.poor_vr_share|pct1}} and {{bias.poor_pre1936_share|pct1}}. Across areas, tagging share and the share of pre-1910 boxes are unrelated ($\rho$ = {{bias.rho_tag_old|f2}}). The Wikidata check is reassuring for heritage boxes: {{wikidata.matched50|int}} of the {{wikidata.with_coord|int}} Wikidata post boxes with coordinates lie within 50 metres of an OpenStreetMap box, and {{wikidata.matched_dated|int}} of those have a cypher tag.
+
+\section{Discussion}
+
+Three findings stand out. First, the survival of the earliest boxes is substantial: about {{victoria.genuine|int}} genuine Victorian boxes, most of them in walls, and {{edward8.n|int}} of Edward VIII's, close to the specialists' count of survivors. Second, the cypher record preserves a political event in iron: the Pillar Box War produced a near-complete substitution of the Scottish crown for EIIR on Scottish boxes, visible across {{scotland.sc|int}} boxes seventy years later. Third, the mix of cyphers works as a rough clock for towns. It separates inner London and Victorian resorts from post-war new towns, and in a small sample it tracks how much of a town existed in 1911. But it measures the age of the boxes, not of the streets, and boxes are replaced: an old market town that has renewed its boxes looks young.
+
+The data are a by-product of volunteer mapping. OpenStreetMap has grown into a detailed record of street furniture, and tags such as \texttt{royal\_cypher} are added by people standing in front of the box. That makes the record specific and checkable, but also uneven. The tests here suggest the unevenness is mostly in coverage, not in which boxes get tagged.
+
+\section{Limitations}
+
+The counts are of mapped and tagged boxes, about half of the boxes that exist, and the share tagged varies from under a third to all of an area's boxes. Royal Mail's total of 115,000 dates from 2002, so the coverage figure is approximate. A cypher dates the casting of a box or door, not its installation: boxes are moved and reused, doors are replaced (as most Edward VIII wall and lamp boxes were), reproduction boxes copy old cyphers, and some boxes are tagged wrongly. The anonymous boxes of 1879 to 1887 and other boxes without a cypher cannot be dated here. Town assignment uses built-up area centroids and areas, not outlines. The 1911 check rests on {{check1911.n|int}} towns, mostly resorts, with parish or borough boundaries that differ from 2021 built-up areas. The Edward VIII and Penfold totals I compare with come from secondary sources (a Historic Environment Scotland listing and Wikipedia) rather than from the Letter Box Study Group's own records.
+
+\section{Conclusion}
+
+OpenStreetMap's volunteers have recorded the royal cypher on {{tag.dated|int}} of the United Kingdom's post boxes. Elizabeth II is on most of them, but {{victoria.n|int}} still carry Victoria's VR and {{edward8.n|int}} the cypher of a king who reigned for 325 days. The Scottish crown has almost entirely replaced EIIR in Scotland. And the cyphers on a town's boxes say something, if not everything, about when its streets were built.
+
+\section*{Data and code availability}
+
+Data and code: \url{https://github.com/Tristan-Hotham/postbox-kings}. Interactive version: \url{https://tristan-hotham.github.io/postbox-kings/}. Archived release: \url{https://doi.org/10.5281/zenodo.23729633}. The data files derived from OpenStreetMap are released under the Open Database Licence 1.0; the text and figures are released under CC BY 4.0, and the code under the MIT licence.
+
+\section*{AI statement}
+
+I wrote the text, with drafting and editing assistance from Claude (Anthropic), which also helped prepare the analysis code. I reviewed and checked all text and results.
+
+\section*{References}
+\small
+Bast, H. and Buchhold, B. (2017) QLever: a query engine for efficient SPARQL+Text search. In \emph{Proceedings of the 2017 ACM Conference on Information and Knowledge Management (CIKM)}. Endpoint: \url{https://qlever.cs.uni-freiburg.de}
+
+Historic Environment Scotland (n.d.) Listed building LB52465: Edward VIII pillar box, Glasgow. \url{https://portal.historicenvironment.scot/designation/LB52465} (accessed 28 October 2026).
+
+Hotham, T. (2026) Did the Railway Invent the Seaside? Census Growth of British Resorts Before and After the Line Arrived, 1801 to 1911. Zenodo. \url{https://doi.org/10.5281/zenodo.23727127}
+
+Natural Earth (2026) 1:10m land polygons. Public domain. \url{https://www.naturalearthdata.com}
+
+Office for National Statistics (2023a) Built-up areas 2022 for Great Britain (centroids and areas) and the LSOA 2021 to built-up area 2022 best-fit lookup. Open Geography Portal. Open Government Licence v3.0. \url{https://geoportal.statistics.gov.uk}
+
+Office for National Statistics (2023b) Census 2021, TS001: Number of usual residents in households and communal establishments. Nomis. Open Government Licence v3.0. \url{https://www.nomisweb.co.uk}
+
+OpenStreetMap contributors (2026) OpenStreetMap. Open Database Licence 1.0. \url{https://www.openstreetmap.org} (data retrieved 28 October 2026).
+
+Ordnance Survey (2026) OS Open Names. Open Government Licence v3.0. \url{https://www.ordnancesurvey.co.uk/products/os-open-names}
+
+University of Portsmouth (2026) A Vision of Britain through Time. \url{https://www.visionofbritain.org.uk}
+
+Wikidata contributors (2026) Wikidata. CC0. \url{https://www.wikidata.org} (retrieved 28 October 2026 through QLever).
+
+Wikipedia contributors (2026a) Pillar box. English Wikipedia. \url{https://en.wikipedia.org/wiki/Pillar_box} (accessed 28 October 2026).
+
+Wikipedia contributors (2026b) Post box. English Wikipedia. \url{https://en.wikipedia.org/wiki/Post_box} (accessed 28 October 2026).
+
+Wikipedia contributors (2026c) Royal cypher. English Wikipedia. \url{https://en.wikipedia.org/wiki/Royal_cypher} (accessed 28 October 2026).
+
+Wikipedia contributors (2026d) Pillar Box War. English Wikipedia. \url{https://en.wikipedia.org/wiki/Pillar_Box_War} (accessed 28 October 2026).
+\end{document}

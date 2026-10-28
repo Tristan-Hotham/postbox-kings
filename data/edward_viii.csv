@@ -1,0 +1,144 @@
+osm,lat,lon,btype,design,nation,area,near_place,near_town
+node/973832261,52.47661,-1.89203,pillar,type_a,England,Birmingham,Digbeth,Birmingham
+node/448635608,52.46142,-1.80885,pillar,,England,Birmingham,Gilbertstone,Solihull
+node/4317378729,52.45456,-1.98051,pillar,,England,Birmingham,Ridgacre,Smethwick
+node/756696055,52.40968,-1.95538,pillar,,England,Birmingham,Turves Green,Birmingham
+node/3604584798,53.81576,-3.03089,pillar,,England,Blackpool,Queenstown,Blackpool
+node/432578795,50.71547,-1.9307,pillar,,England,"Bournemouth, Christchurch and Poole",Branksome Park,Poole
+node/2912918699,50.75016,-1.69717,pillar,,England,"Bournemouth, Christchurch and Poole",Walkford,New Milton
+node/4317726612,50.70768,-1.94222,pillar,,England,"Bournemouth, Christchurch and Poole",Lilliput,Poole
+node/4316472075,53.54574,-2.31049,pillar,,England,Bury,Stand,Whitefield
+node/4316479684,53.52324,-2.28782,pillar,,England,Bury,Prestwich Bank,Whitefield
+node/2593852412,51.98932,-0.61904,wall,ludlow,England,Central Bedfordshire,Woburn,Woburn
+node/3811695678,51.43247,-2.62231,pillar,,England,City of Bristol,Ashton Vale,Bristol
+node/4030634265,51.46807,-2.54196,pillar,,England,City of Bristol,Clay Hill,Bristol
+node/4070569456,51.42568,-2.55884,pillar,,England,City of Bristol,Upper Knowle,Bristol
+node/2882341596,51.4846,-2.60695,pillar,,England,City of Bristol,Westbury Park,Bristol
+node/287298353,52.89916,-1.48832,pillar,,England,City of Derby,Normanton,Derby
+node/392944973,52.92429,-1.51548,pillar,,England,City of Derby,Mackworth Estate,Derby
+node/353891195,52.89372,-1.49519,pillar,,England,City of Derby,Sunny Hill,Derby
+node/4317435676,52.60028,-1.13063,pillar,,England,City of Leicester,West Knighton,Leicester
+node/4316533393,52.60427,-2.15344,pillar,,England,City of Wolverhampton,Aldersley,Wolverhampton
+node/4316567159,50.71677,-3.49627,pillar,,England,Devon,St Loye's,Exeter
+node/100571705,54.0903,-0.19804,pillar,,England,East Riding of Yorkshire,Old Town,Bridlington
+node/4201150167,54.08228,-0.18926,pillar,,England,East Riding of Yorkshire,Bridlington,Bridlington
+node/4318309303,51.06427,0.14528,pillar,,England,East Sussex,St John's,Crowborough
+node/4318193739,51.0961,0.26802,wall,ludlow,England,East Sussex,Frant,Royal Tunbridge Wells
+node/399616607,51.89162,0.87056,pillar,,England,Essex,Lexden,Colchester
+node/1942765872,51.53555,0.10193,pillar,type_b,England,Greater London,Barking,Chigwell
+node/408615997,51.54084,0.07426,pillar,,England,Greater London,Barking,Chigwell
+node/332323291,51.41532,-0.02508,pillar,,England,Greater London,Beckenham,City of Westminster
+node/4317734090,51.45204,0.11093,pillar,,England,Greater London,Blackfen,Swanley
+node/291977324,51.45437,-0.11999,pillar,,England,Greater London,Brixton,City of Westminster
+node/369840821,51.50924,-0.06332,pillar,type_b,England,Greater London,Wapping,City of London
+node/151025575,51.64553,-0.14204,pillar,,England,Greater London,Cockfosters,Potters Bar
+node/4314868754,51.44706,-0.18463,pillar,,England,Greater London,Earlsfield,City of Westminster
+node/4314795326,51.58459,-0.16176,pillar,,England,Greater London,East Finchley,London
+node/4316521600,51.4617,-0.2754,pillar,,England,Greater London,East Sheen,Sunbury-on-Thames
+node/3598508891,51.39025,-0.03114,pillar,,England,Greater London,Eden Park,Warlingham
+node/3865406759,51.3502,-0.2249,pillar,,England,Greater London,Cheam,Ewell
+node/1041192560,51.66677,-0.08372,pillar,,England,Greater London,Forty Hill,Waltham Cross
+node/4314799790,51.57999,-0.22593,pillar,,England,Greater London,Hendon,Borehamwood
+node/4317768030,51.43595,0.12664,pillar,,England,Greater London,North Cray,Swanley
+node/974273172,51.46558,-0.05793,pillar,type_a,England,Greater London,Nunhead,City of London
+node/1800903342,51.67238,-0.17296,pillar,,England,Greater London,Hadley Wood,Potters Bar
+node/4317817341,51.59133,-0.30028,pillar,,England,Greater London,Queensbury,Bushey
+node/433921665,51.42009,0.13222,pillar,,England,Greater London,Ruxley,Swanley
+node/3508868922,51.39604,0.0089,pillar,,England,Greater London,Shortlands,Warlingham
+node/588966625,51.43714,-0.01302,pillar,type_b,England,Greater London,Southend,City of London
+node/330270866,51.633,-0.12651,pillar,,England,Greater London,Southgate,Potters Bar
+node/267820903,51.54453,0.00457,pillar,type_a,England,Greater London,Stratford,City of London
+node/376452823,51.45172,-0.3396,pillar,,England,Greater London,Twickenham,Sunbury-on-Thames
+node/339914019,51.41691,-0.09728,pillar,type_b,England,Greater London,Upper Norwood,City of Westminster
+node/663364990,51.57543,0.02829,pillar,type_a,England,Greater London,Wanstead,Chigwell
+node/73847029,51.06217,-1.29698,pillar,,England,Hampshire,Fairdown,Winchester
+node/2165344644,51.69882,-0.42549,pillar,,England,Hertfordshire,Abbots Langley,Watford
+node/4316559201,51.65209,-0.52552,pillar,,England,Hertfordshire,Chorleywood West,Chorleywood
+node/4317756687,51.71085,-0.11226,pillar,,England,Hertfordshire,Cuffley,Cheshunt
+node/475357174,51.74888,-0.31081,pillar,,England,Hertfordshire,The Camp,St Albans
+node/452922231,50.65398,-1.15874,pillar,,England,Isle of Wight,Sandown,Sandown
+node/582592018,50.63733,-1.1783,pillar,,England,Isle of Wight,Lower Hyde,Shanklin
+node/317255660,51.36826,1.43141,pillar,,England,Kent,Reading Street,Broadstairs
+node/677517550,51.27703,0.52207,pillar,,England,Kent,Maidstone,Maidstone
+node/559461507,51.33222,1.42402,pillar,,England,Kent,Ramsgate,Ramsgate
+node/4317776347,53.40396,-2.80625,pillar,,England,Knowsley,Windy Arbor,Prescot
+node/4315813230,53.8578,-2.17548,pillar,,England,Lancashire,Lenches,Colne
+node/3027098243,54.03424,-2.79512,pillar,,England,Lancashire,The Greaves,Lancaster
+node/1012168874,53.84492,-2.98585,pillar,type_b,England,Lancashire,Little Poulton,Poulton-le-Fylde
+node/2205040405,53.86036,-1.61544,pillar,,England,Leeds,Cookridge,Yeadon
+node/4314070965,52.71198,-1.37132,pillar,,England,Leicestershire,Hugglescote,Coalville
+node/4317450120,52.57187,-1.32717,pillar,,England,Leicestershire,Elmesthorpe,Earl Shilton
+node/4316551169,52.65768,-0.46657,pillar,,England,Lincolnshire,Northfields,Stamford
+node/619055913,53.38368,-2.90641,pillar,,England,Liverpool,Calderstones,Liverpool
+node/660031863,53.3982,-2.96646,pillar,type_b,England,Liverpool,Edge Hill,Liverpool
+node/713400895,54.57228,-1.22928,pillar,,England,Middlesbrough,Middlesbrough,Middlesbrough
+node/4315056670,54.98081,-1.6014,pillar,,England,Newcastle upon Tyne,Shieldfield,Newcastle upon Tyne
+node/2807170010,51.4457,-2.85214,pillar,,England,North Somerset,Walton St Mary,Clevedon
+node/4313758615,51.4295,-2.85304,pillar,,England,North Somerset,Clevedon,Clevedon
+node/4315052274,55.05949,-1.45651,pillar,,England,North Tyneside,Whitley Bay,Whitley Bay
+node/4314109405,54.37543,-1.708,pillar,,England,North Yorkshire,Hipswell,Richmond
+node/4314728720,53.43782,-1.3297,pillar,,England,Rotherham,East Dene,Rotherham
+node/4315819017,53.42424,-2.43892,pillar,,England,Salford,Cadishead,Partington
+node/14173060939,53.49424,-2.29635,,,England,Salford,Brindle Heath,Salford
+node/345826542,53.35526,-1.50731,pillar,,England,Sheffield,Ecclesall,Sheffield
+node/4313741060,53.35261,-1.40133,pillar,,England,Sheffield,Frecheville,Sheffield
+node/4313778324,53.41501,-1.50163,pillar,,England,Sheffield,Owlerton,Sheffield
+node/2908251909,50.97058,-2.76601,wall,ludlow,England,Somerset,Martock,South Petherton
+node/4318197498,50.94967,-2.80981,wall,ludlow,England,Somerset,South Petherton,South Petherton
+node/4317798898,54.98181,-1.48111,pillar,,England,South Tyneside,Jarrow,Jarrow
+node/369608508,53.41548,-2.19586,pillar,,England,Stockport,Heaton Mersey,Stockport
+node/3720251562,52.01138,1.418,wall,ludlow,England,Suffolk,Bawdsey,Felixstowe
+node/447959133,52.04282,0.73257,pillar,,England,Suffolk,Sudbury,Sudbury
+node/3509002579,52.35367,1.06145,wall,ludlow,England,Suffolk,Wortham,Diss
+node/4317791413,54.92594,-1.37314,pillar,,England,Sunderland,Roker,Sunderland
+node/3863404521,51.31226,-0.24317,pillar,,England,Surrey,Great Burgh,Epsom
+node/3863044422,51.36636,-0.36897,pillar,type_b,England,Surrey,Esher,Esher
+node/3863064805,51.36722,-0.35326,pillar,,England,Surrey,Esher,Esher
+node/3863093928,51.3568,-0.33214,pillar,,England,Surrey,Claygate,Esher
+node/4358150431,51.35248,-0.37806,pillar,,England,Surrey,West End,Esher
+node/416573710,51.25805,-0.54566,pillar,,England,Surrey,Burpham,Guildford
+node/1861753247,51.31876,-0.30625,pillar,,England,Surrey,Lower Ashtead,Leatherhead
+node/3862978393,51.37122,-0.41778,pillar,type_b,England,Surrey,Ashley Park,Walton-on-Thames
+node/3290407362,51.3396,-0.50924,pillar,,England,Surrey,West Byfleet,Addlestone
+node/1601764983,51.32801,-0.56511,pillar,,England,Surrey,Horsell,Woking
+node/247364735,51.31725,-0.15894,pillar,,England,Surrey,Woodmansterne,Banstead
+node/4316469027,53.48049,-2.13591,pillar,,England,Tameside,Droylsden,Droylsden
+node/4316528728,50.86155,-0.14264,pillar,,England,The City of Brighton and Hove,Patcham,Brighton and Hove
+node/1477948597,53.40981,-2.32107,pillar,,England,Trafford,Brooklands,Sale
+node/4316502657,50.81459,-0.40532,pillar,,England,West Sussex,West Worthing,Worthing
+node/3507819708,54.12753,-3.2313,pillar,,England,Westmorland and Furness,Ormsgill,Barrow-in-Furness
+node/4315754506,54.65738,-2.75969,pillar,,England,Westmorland and Furness,Skirsgill,Penrith
+node/4314899972,51.38946,-0.62754,pillar,,England,Windsor and Maidenhead,Broomhall,Egham
+node/4317498634,53.40187,-3.05596,pillar,,England,Wirral,Bidston,Wallasey
+node/687059085,52.21318,-2.22669,pillar,,England,Worcestershire,Barbourne,Worcester
+node/4315882057,54.65946,-5.66939,wall,,Northern Ireland,Northern Ireland,,
+node/4317253284,57.13068,-2.08332,pillar,,Scotland,Aberdeen City,Tullos,Aberdeen
+node/4317267732,57.14573,-2.12343,pillar,,Scotland,Aberdeen City,Rosemount,Aberdeen
+node/1403164009,56.62275,-6.07139,pillar,type_b,Scotland,Argyll and Bute,Ledaig,Tobermory
+node/1794735424,56.62308,-6.06465,pillar,type_b,Scotland,Argyll and Bute,Tobermory,Tobermory
+node/4317283433,55.61135,-4.48474,pillar,,Scotland,East Ayrshire,Kilmarnock,Kilmarnock
+node/4318169005,55.90578,-4.21341,pillar,,Scotland,East Dunbartonshire,Bishopbriggs,Bishopbriggs
+node/4318171429,55.94475,-4.31812,pillar,,Scotland,East Dunbartonshire,Milngavie,Milngavie
+node/815292473,55.7962,-4.2638,pillar,,Scotland,East Renfrewshire,Stamperland,Rutherglen
+node/1915056163,56.06848,-3.45445,pillar,,Scotland,Fife,Abbey Parks,Dunfermline
+node/4316583312,55.86021,-4.13791,pillar,,Scotland,Glasgow City,Barlanark,Uddingston
+node/985075228,55.82334,-4.26985,pillar,,Scotland,Glasgow City,Battlefield,Rutherglen
+node/28213526,55.81273,-4.26831,pillar,,Scotland,Glasgow City,Cathcart,Rutherglen
+node/31327619,55.83713,-4.32623,pillar,,Scotland,Glasgow City,Corkerhill,Barrhead
+node/763128061,55.87535,-4.3011,pillar,,Scotland,Glasgow City,Dowanhill,Glasgow
+node/301522102,55.85375,-4.22786,pillar,,Scotland,Glasgow City,Bridgeton,Glasgow
+node/342072182,55.87471,-4.28885,pillar,,Scotland,Glasgow City,Hillhead,Glasgow
+node/616426342,55.87983,-4.30539,pillar,,Scotland,Glasgow City,Hyndland,Glasgow
+node/4318225374,55.82925,-4.27814,pillar,,Scotland,Glasgow City,Langside,Rutherglen
+node/4318246924,55.80655,-4.27473,pillar,,Scotland,Glasgow City,Muirend,Rutherglen
+node/4317828023,55.8383,-4.257,pillar,,Scotland,Glasgow City,Govanhill,Rutherglen
+node/4316576407,55.84261,-4.27489,pillar,,Scotland,Glasgow City,Strathbungo,Glasgow
+node/4317833818,55.83825,-4.26862,pillar,,Scotland,Glasgow City,Strathbungo,Glasgow
+node/4318212612,55.83863,-4.28077,pillar,,Scotland,Glasgow City,Strathbungo,Glasgow
+node/4318201780,55.84497,-4.27527,pillar,,Scotland,Glasgow City,Tradeston,Glasgow
+node/4317814158,55.83551,-4.06185,pillar,,Scotland,North Lanarkshire,Viewpark,Uddingston
+node/3650626873,55.4466,-4.64449,pillar,,Scotland,South Ayrshire,Seafield,Ayr
+node/12065366031,56.07346,-4.33631,pillar,type_b,Scotland,Stirling,Balfron,Milngavie
+node/4317843200,56.00376,-4.57844,pillar,,Scotland,West Dunbartonshire,Balloch,Alexandria
+node/4318298481,51.51477,-3.22897,pillar,,Wales,Cardiff,Yr Eglwys Newydd,Cardiff
+node/3094252281,52.66343,-3.13704,pillar,,Wales,Powys,Burgess Lands,Y Trallwng
